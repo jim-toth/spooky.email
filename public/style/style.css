@@ -1,0 +1,23 @@
+body {
+	margin: 0px;
+}
+
+canvas {
+	padding: 0px;
+	margin: 0px;
+	z-index: 1;
+}
+
+div#credits {
+	position:fixed;
+	left:5px;
+	bottom:5px;
+	font-size:12;
+	color:white;
+	z-index: 2;
+}
+
+a {
+	color: white;
+	text-decoration: none;
+}
