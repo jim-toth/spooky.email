@@ -71,7 +71,7 @@ $(document).ready(function () {
 		canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
 		// Center text
-		canvasContext.fillStyle = 'red';
+		canvasContext.fillStyle = 'grey';
 		canvasContext.font = '72px Verdana';
 		canvasContext.textAlign = 'center';
 		canvasContext.fillText('jim@spooky.email', canvas.width/2, canvas.height/2);
@@ -96,7 +96,7 @@ $(document).ready(function () {
 
 		// Spooky opacity filter!
 		maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
-		maskContext.fillStyle = 'rgba(0,0,0,0.75)';
+		maskContext.fillStyle = 'rgba(0,0,0,0.85)';
 		maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
 
 		// flashlight

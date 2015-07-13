@@ -5,6 +5,11 @@
 			"path": "/",
 			"name": "spooky.email",
 			"file_exclude_patterns": ["*.mp3", "*.sublime-workspace", "*.jpg"]
+		},
+		{
+			"path": "./public",
+			"name": "spooky.js",
+			"file_exclude_patterns": ["*.mp3", "*.sublime-workspace", "*.jpg"]
 		}
 	]
 }
