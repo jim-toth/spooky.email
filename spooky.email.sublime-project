@@ -1,0 +1,10 @@
+{
+	"folders":
+	[
+		{
+			"path": "/",
+			"name": "spooky.email",
+			"file_exclude_patterns": ["*.mp3", "*.sublime-workspace", "*.jpg"]
+		}
+	]
+}
