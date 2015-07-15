@@ -6,7 +6,9 @@ $(document).ready(function () {
 	} else if (typeof webkitAudioContext !== 'undefined') {
 		audioContext = new webkitAudioContext();
 	} else {
-		throw new Error('AudioContext not supported.');
+		throw new Error(
+			'AudioContext not supported by this browser because it\'s too old.  Is it a ghost?'
+		);
 	}
 
 	// Grab canvas and canvas context
@@ -200,3 +202,20 @@ $(document).ready(function () {
 	// Kick it off
 	draw();
 });
+
+// Spooky console art
+var spookyWord = 'SPOOOOOOOOOKY';
+var spookyLine = '.\t\t\t';
+var spookyString = spookyLine + '~~~(.  .)~~~\n'
+					+ spookyLine + 	'\\__      __/\n';
+for (var i=0; i < spookyWord.length; i++) {
+	if(i % 2 == 0) {
+		spookyString += spookyLine + '   )  ' + spookyWord.substr(i,1) + '  )\n';
+	} else {
+		spookyString += spookyLine + '  (   ' + spookyWord.substr(i,1) + ' (\n';
+	}
+}
+spookyString += spookyLine + 	'   \\    /\n'
+				+ spookyLine + 	'    \\  /\n'
+				+ spookyLine + 	'     \\/';
+console.log(spookyString);
