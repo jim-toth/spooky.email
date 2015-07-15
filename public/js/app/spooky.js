@@ -17,9 +17,13 @@ $(document).ready(function () {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
+	// Image assets
+	var images = [];
+
 	// Create collection for rain to hold our raindrops
 	var rain = [];
 
+	// Constants
 	var MAX_RAINDROPS = 100;
 	var DEFAULT_VELOCITY = 20;
 	var RAINDROP_WIDTH = 1;
@@ -53,8 +57,26 @@ $(document).ready(function () {
 		};
 	};
 
+	// Generates a random velocity modifier for raindrops
 	function generateVelocityMod() {
 		return Math.floor(Math.random() * (VELOCITY_MOD_MAX - VELOCITY_MOD_MIN + 1)) + VELOCITY_MOD_MIN;
+	};
+
+	// Generates a new spooky image object
+	function spookyImage(name, src, clickable, clickEvent) {
+		var oSpooky = {
+			name: name,
+			src: src,
+			img: new Image(),
+			x: -1,
+			y: -1,
+			clickable: clickable,
+			clickEvent: clickEvent
+		};
+
+		oSpooky.img.src = src;
+
+		return oSpooky;
 	};
 
 	// Draw function
@@ -76,6 +98,23 @@ $(document).ready(function () {
 		canvasContext.textAlign = 'center';
 		canvasContext.fillText('jim@spooky.email', canvas.width/2, canvas.height/2);
 
+		// Draw images
+		for (var i=0; i < images.length; i++) {
+			if (images[i].img.complete) {
+				// update image positions
+				if (images[i].x == -1 || images[i].y == -1) {
+					if (images[i].name == 'github-logo') {
+						images[i].x = (canvas.width/2)-(images[i].img.width/2);
+						images[i].y = canvas.height-(images[i].img.height)-25;
+					}
+				}
+
+				// draw image
+				canvasContext.drawImage(images[i].img, images[i].x, images[i].y);
+			}
+		}
+		
+
 		// Raindrops
 		$.each(rain, function (idx, drop) {
 			// Draw drop
@@ -83,7 +122,7 @@ $(document).ready(function () {
 			canvasContext.fillRect(drop.x, drop.y, RAINDROP_WIDTH, RAINDROP_HEIGHT);
 
 			// Animate
-			if(drop.y + drop.velocity <= canvas.height) {
+			if (drop.y + drop.velocity <= canvas.height) {
 				drop.y = drop.y + drop.velocity;
 			} else {
 				// When raindrop reaches bottom of screen, reset position to top
@@ -100,7 +139,7 @@ $(document).ready(function () {
 		maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
 
 		// flashlight
-		if(flashlight_on) {
+		if (flashlight_on) {
 			//maskContext.translate(cursor_pos.x, cursor_pos.y);
 			var grd = maskContext.createRadialGradient(cursor_pos.x, cursor_pos.y, FLASHLIGHT_RADIUS_1, cursor_pos.x, cursor_pos.y, FLASHLIGHT_RADIUS_2);
 			grd.addColorStop(0, 'white');
@@ -115,8 +154,14 @@ $(document).ready(function () {
 		canvasContext.globalCompositeOperation = 'source-on';
 	};
 
+	// Track image assets
+	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
+		// Open github page
+		window.open('https://github.com/jim-toth', '_blank');
+	}));
+
 	// Generate raindrops
-	for(var i=0; i < canvas.width/RAINDROP_SPACING; i++) {
+	for (var i=0; i < canvas.width/RAINDROP_SPACING; i++) {
 		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
 	}
 	
@@ -126,11 +171,29 @@ $(document).ready(function () {
 		cursor_pos.y = ev.pageY;
 	});
 
+	// Catch key presses
 	$('body').keydown(function (ev) {
-		if(event.which == FLASHLIGHT_KEY) {
-			event.preventDefault();
+		if (ev.which == FLASHLIGHT_KEY) {
+			ev.preventDefault();
 
 			flashlight_on = !flashlight_on;
+		}
+	});
+
+	// Catch canvas clicks
+	canvas.addEventListener('click', function (ev) {
+		ev.preventDefault();
+
+		for (var i=0; i < images.length; i++) {
+			// If the image is clickable and loaded...
+			if (images[i].clickable && images[i].img.complete) {
+				// Check if the click was on within an image's bounds
+				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
+					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
+					// Image clicked, trigger image click event
+					images[i].clickEvent();
+				}
+			}
 		}
 	});
 
