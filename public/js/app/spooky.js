@@ -37,6 +37,7 @@ $(document).ready(function () {
 	var FLASHLIGHT_RADIUS_2 = 175;
 	var FLASHLIGHT_KEY = '70'; // f
 	var RAINDROP_SPACING = 5;
+	var LOGO_SIZE = 120;
 
 	// toggle variable for flashlight on/off
 	var flashlight_on = true;
@@ -102,17 +103,28 @@ $(document).ready(function () {
 
 		// Draw images
 		for (var i=0; i < images.length; i++) {
+			// If the image is loaded
 			if (images[i].img.complete) {
-				// update image positions
+				// Update image positions
 				if (images[i].x == -1 || images[i].y == -1) {
-					if (images[i].name == 'github-logo') {
-						images[i].x = (canvas.width/2)-(images[i].img.width/2);
-						images[i].y = canvas.height-(images[i].img.height)-25;
+					switch (images[i].name) {
+						// Github logo center bottom
+						case 'github-logo':
+							images[i].x = (canvas.width/2)-(LOGO_SIZE/2);
+							images[i].y = canvas.height - LOGO_SIZE - 25;
+							break;
+						// Twitter logo bottom right
+						case 'twitter-logo':
+							images[i].x = canvas.width - LOGO_SIZE;
+							images[i].y = canvas.height - LOGO_SIZE;
+							break;
+						default:
+							break;
 					}
 				}
 
-				// draw image
-				canvasContext.drawImage(images[i].img, images[i].x, images[i].y);
+				// Draw image
+				canvasContext.drawImage(images[i].img, images[i].x, images[i].y, LOGO_SIZE, LOGO_SIZE);
 			}
 		}
 		
@@ -157,10 +169,17 @@ $(document).ready(function () {
 	};
 
 	// Track image assets
+	// Github logo
 	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
-		// Open github page
+		// Open github
 		window.open('https://github.com/jim-toth', '_blank');
 	}));
+	// Twitter logo
+	images.push(spookyImage('twitter-logo', 'media/TwitterLogo_white.png', true, function () {
+		// Open twitter
+		window.open('https://twitter.com/letifarz', '_blank');
+	}));
+
 
 	// Generate raindrops
 	for (var i=0; i < canvas.width/RAINDROP_SPACING; i++) {
