@@ -12,12 +12,12 @@ $(document).ready(function () {
 	}
 
 	// Grab canvas and canvas context
-	var canvas = $('canvas#spooky_canvas')[0];
-	var canvasContext = canvas.getContext('2d');
+	var jqCanvas = $('canvas#spooky_canvas')[0];
+	var canvasContext = jqCanvas.getContext('2d');
 
 	// Set canvas height and width to fit page
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	jqCanvas.width = window.innerWidth;
+	jqCanvas.height = window.innerHeight;
 
 	// Image assets
 	var images = [];
@@ -44,8 +44,8 @@ $(document).ready(function () {
 
 	// Helper canvas for opacity mask
 	var maskCanvas = document.createElement('canvas');
-	maskCanvas.width = canvas.width;
-	maskCanvas.height = canvas.height;
+	maskCanvas.width = jqCanvas.width;
+	maskCanvas.height = jqCanvas.height;
 	var maskContext = maskCanvas.getContext('2d');
 	
 	// Track cursor position
@@ -66,7 +66,7 @@ $(document).ready(function () {
 	};
 
 	// Generates a new spooky image object
-	function spookyImage(name, src, clickable, clickEvent) {
+	function spookyImage(name, src, clickable, clickEvent, cursor_img) {
 		var oSpooky = {
 			name: name,
 			src: src,
@@ -89,17 +89,17 @@ $(document).ready(function () {
 
 		// Reset
 		canvasContext.globalCompositeOperation = 'source-over';
-		canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+		canvasContext.clearRect(0, 0, jqCanvas.width, jqCanvas.height);
 
 		// Fill canvas background
 		canvasContext.fillStyle = 'black';
-		canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+		canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
 
 		// Center text
 		canvasContext.fillStyle = 'grey';
 		canvasContext.font = '72px Verdana';
 		canvasContext.textAlign = 'center';
-		canvasContext.fillText('jim@spooky.email', canvas.width/2, canvas.height/2);
+		canvasContext.fillText('jim@spooky.email', jqCanvas.width/2, jqCanvas.height/2);
 
 		// Draw images
 		for (var i=0; i < images.length; i++) {
@@ -110,13 +110,13 @@ $(document).ready(function () {
 					switch (images[i].name) {
 						// Github logo center bottom
 						case 'github-logo':
-							images[i].x = (canvas.width/2)-(LOGO_SIZE/2);
-							images[i].y = canvas.height - LOGO_SIZE - 25;
+							images[i].x = (jqCanvas.width/2)-(LOGO_SIZE/2);
+							images[i].y = jqCanvas.height - LOGO_SIZE - 25;
 							break;
 						// Twitter logo bottom right
 						case 'twitter-logo':
-							images[i].x = canvas.width - LOGO_SIZE;
-							images[i].y = canvas.height - LOGO_SIZE;
+							images[i].x = jqCanvas.width - LOGO_SIZE;
+							images[i].y = jqCanvas.height - LOGO_SIZE;
 							break;
 						default:
 							break;
@@ -127,16 +127,15 @@ $(document).ready(function () {
 				canvasContext.drawImage(images[i].img, images[i].x, images[i].y, LOGO_SIZE, LOGO_SIZE);
 			}
 		}
-		
 
-		// Raindrops
+		// Draw Raindrops
 		$.each(rain, function (idx, drop) {
 			// Draw drop
 			canvasContext.fillStyle = RAIN_FILL_STYLE;
 			canvasContext.fillRect(drop.x, drop.y, RAINDROP_WIDTH, RAINDROP_HEIGHT);
 
 			// Animate
-			if (drop.y + drop.velocity <= canvas.height) {
+			if (drop.y + drop.velocity <= jqCanvas.height) {
 				drop.y = drop.y + drop.velocity;
 			} else {
 				// When raindrop reaches bottom of screen, reset position to top
@@ -168,24 +167,7 @@ $(document).ready(function () {
 		canvasContext.globalCompositeOperation = 'source-on';
 	};
 
-	// Track image assets
-	// Github logo
-	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
-		// Open github
-		window.open('https://github.com/jim-toth', '_blank');
-	}));
-	// Twitter logo
-	images.push(spookyImage('twitter-logo', 'media/TwitterLogo_white.png', true, function () {
-		// Open twitter
-		window.open('https://twitter.com/letifarz', '_blank');
-	}));
 
-
-	// Generate raindrops
-	for (var i=0; i < canvas.width/RAINDROP_SPACING; i++) {
-		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
-	}
-	
 	// Initialize mouse cursor update function
 	$('canvas#spooky_canvas').mousemove(function (ev) {
 		cursor_pos.x = ev.pageX;
@@ -202,7 +184,7 @@ $(document).ready(function () {
 	});
 
 	// Catch canvas clicks
-	canvas.addEventListener('click', function (ev) {
+	jqCanvas.addEventListener('click', function (ev) {
 		ev.preventDefault();
 
 		for (var i=0; i < images.length; i++) {
@@ -217,6 +199,24 @@ $(document).ready(function () {
 			}
 		}
 	});
+
+
+	// Track image assets, make them clickable
+	// Github logo
+	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
+		// Open github
+		window.open('https://github.com/jim-toth', '_blank');
+	}));
+	// Twitter logo
+	images.push(spookyImage('twitter-logo', 'media/TwitterLogo_white.png', true, function () {
+		// Open twitter
+		window.open('https://twitter.com/letifarz', '_blank');
+	}));
+
+	// Generate raindrops
+	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i++) {
+		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
+	}
 
 	// Kick it off
 	draw();
