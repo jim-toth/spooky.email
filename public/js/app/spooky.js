@@ -35,18 +35,28 @@ $(document).ready(function () {
 	var RAIN_FILL_STYLE = 'aqua';
 	var FLASHLIGHT_RADIUS_1 = 150;
 	var FLASHLIGHT_RADIUS_2 = 175;
-	var FLASHLIGHT_KEY = '70'; // f
+	var FLASHLIGHT_KEY = 70; // f
+	var DEBUG_KEY = 68; // d
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
 
 	// toggle variable for flashlight on/off
 	var flashlight_on = true;
 
-	// Helper canvas for opacity mask
+	// toggle variable for debug mode on/off
+	var debug_mode_on = false;
+
+	// Canvas for opacity mask
 	var maskCanvas = document.createElement('canvas');
 	maskCanvas.width = jqCanvas.width;
 	maskCanvas.height = jqCanvas.height;
 	var maskContext = maskCanvas.getContext('2d');
+
+	// Canvas for debug
+	var debugCanvas = document.createElement('canvas');
+	debugCanvas.width = jqCanvas.width;
+	debugCanvas.height = jqCanvas.height;
+	var debugContext = debugCanvas.getContext('2d');
 	
 	// Track cursor position
 	var cursor_pos = { x: -1000, y: -1000 };
@@ -147,7 +157,10 @@ $(document).ready(function () {
 		});
 
 		// Spooky opacity filter!
+		// clear mask context
 		maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
+
+		// fill with opacity settings
 		maskContext.fillStyle = 'rgba(0,0,0,0.85)';
 		maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
 
@@ -159,12 +172,28 @@ $(document).ready(function () {
 			grd.addColorStop(1, 'rgba(255,255,255,0.1)');
 			maskContext.fillStyle = grd;
 			maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
-
 		}
 
+		// Draw mask canvas to main canvas
+		// NB: multiply mode to create the opaque filter effect
 		canvasContext.globalCompositeOperation = 'multiply';
 		canvasContext.drawImage(maskCanvas, 0, 0);
-		canvasContext.globalCompositeOperation = 'source-on';
+		canvasContext.globalCompositeOperation = 'source-over';
+
+		// debug mode
+		if (debug_mode_on) {
+			// clear debug context
+			debugContext.clearRect(0,0,debugCanvas.width, debugCanvas.height);
+
+			// debug mode logo
+			debugContext.fillStyle = 'red';
+			debugContext.font = '32px Verdana';
+			debugContext.textAlign = 'center';
+			debugContext.fillText('DEBUG', jqCanvas.width/2, 72);
+
+			// Draw debug canvas to main canvas
+			canvasContext.drawImage(debugCanvas, 0, 0);
+		}
 	};
 
 
@@ -176,10 +205,15 @@ $(document).ready(function () {
 
 	// Catch key presses
 	$('body').keydown(function (ev) {
-		if (ev.which == FLASHLIGHT_KEY) {
-			ev.preventDefault();
+		ev.preventDefault();
 
-			flashlight_on = !flashlight_on;
+		switch(ev.which) {
+			case FLASHLIGHT_KEY:
+				flashlight_on = !flashlight_on;
+				break;
+			case DEBUG_KEY:
+				debug_mode_on = !debug_mode_on;
+				break;
 		}
 	});
 
