@@ -1,30 +1,4 @@
 $(document).ready(function () {
-	// Grab Audio Context
-	var audioContext;
-	if (typeof AudioContext !== 'undefined') {
-		audioContext = new AudioContext();
-	} else if (typeof webkitAudioContext !== 'undefined') {
-		audioContext = new webkitAudioContext();
-	} else {
-		throw new Error(
-			'AudioContext not supported by this browser because it\'s too old.  Is it a ghost?'
-		);
-	}
-
-	// Grab canvas and canvas context
-	var jqCanvas = $('canvas#spooky_canvas')[0];
-	var canvasContext = jqCanvas.getContext('2d');
-
-	// Set canvas height and width to fit page
-	jqCanvas.width = window.innerWidth;
-	jqCanvas.height = window.innerHeight;
-
-	// Image assets
-	var images = [];
-
-	// Create collection for rain to hold our raindrops
-	var rain = [];
-
 	// Constants
 	var MAX_RAINDROPS = 100;
 	var DEFAULT_VELOCITY = 20;
@@ -41,11 +15,41 @@ $(document).ready(function () {
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'none';
 
+	// Image assets
+	var images = [];
+
+	// Create collection for rain to hold our raindrops
+	var rain = [];
+
 	// toggle variable for flashlight on/off
 	var flashlight_on = true;
 
 	// toggle variable for debug mode on/off
 	var debug_mode_on = false;
+
+	// Track cursor position
+	var cursor_pos = { x: -1000, y: -1000 };
+
+	// Grab Audio Context
+	var audioContext;
+	if (typeof AudioContext !== 'undefined') {
+		audioContext = new AudioContext();
+	} else if (typeof webkitAudioContext !== 'undefined') {
+		audioContext = new webkitAudioContext();
+	} else {
+		throw new Error(
+			'AudioContext not supported by this browser because it\'s too old.'  
+			+'  Is it a ghost?'
+		);
+	}
+
+	// Grab canvas and canvas context
+	var jqCanvas = $('canvas#spooky_canvas')[0];
+	var canvasContext = jqCanvas.getContext('2d');
+
+	// Set canvas height and width to fit page
+	jqCanvas.width = window.innerWidth;
+	jqCanvas.height = window.innerHeight;
 
 	// Canvas for opacity mask
 	var maskCanvas = document.createElement('canvas');
@@ -58,41 +62,6 @@ $(document).ready(function () {
 	debugCanvas.width = jqCanvas.width;
 	debugCanvas.height = jqCanvas.height;
 	var debugContext = debugCanvas.getContext('2d');
-	
-	// Track cursor position
-	var cursor_pos = { x: -1000, y: -1000 };
-
-	// Creates a raindrop object
-	function raindrop(startX, startY, velocity) {
-		return {
-			velocity: velocity,
-			x: startX,
-			y: startY
-		};
-	};
-
-	// Generates a random velocity modifier for raindrops
-	function generateVelocityMod() {
-		return Math.floor(Math.random() * (VELOCITY_MOD_MAX - VELOCITY_MOD_MIN + 1)) + VELOCITY_MOD_MIN;
-	};
-
-	// Generates a new spooky image object, factory method
-	function spookyImage(name, src, clickable, clickEvent, cursorImg) {
-		var oSpooky = {
-			name: name,
-			src: src,
-			img: new Image(),
-			x: -1,
-			y: -1,
-			clickable: clickable,
-			clickEvent: clickEvent,
-			cursorImg: cursorImg
-		};
-
-		oSpooky.img.src = src;
-
-		return oSpooky;
-	};
 
 	// Draw function
 	function draw() {
@@ -201,8 +170,27 @@ $(document).ready(function () {
 
 	// Initialize mouse cursor update function
 	$('canvas#spooky_canvas').mousemove(function (ev) {
+		// Track cursor position
 		cursor_pos.x = ev.pageX;
 		cursor_pos.y = ev.pageY;
+
+		// Reset cursor to default
+		$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
+
+		// Loop through images to see if we need to update cursor
+		for (var i=0; i < images.length; i++) {
+			// If the image has a cursor
+			if(images[i].cursorImg) {
+
+				// Check if the cursor is within an image's bounds
+				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
+					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
+					
+					// Image hover over, update cursor
+					$(jqCanvas).css('cursor', 'url('+images[i].cursorImg+'), auto');
+				}
+			}
+		}
 	});
 
 	// Catch key presses
@@ -235,30 +223,6 @@ $(document).ready(function () {
 			}
 		}
 	});
-
-	// Catch canvas mousemove
-	jqCanvas.addEventListener('mousemove', function (ev) {
-		ev.preventDefault();
-
-		// Reset cursor to default
-		$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
-
-		// Loop through images to see if we need to update cursor
-		for (var i=0; i < images.length; i++) {
-			// If the image has a cursor
-			if(images[i].cursorImg) {
-
-				// Check if the cursor is within an image's bounds
-				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
-					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
-					
-					// Image hover over, update cursor
-					$(jqCanvas).css('cursor', 'url('+images[i].cursorImg+'), auto');
-				}
-			}
-		}
-	});
-
 
 	// Track image assets, make them clickable
 	// Github logo
