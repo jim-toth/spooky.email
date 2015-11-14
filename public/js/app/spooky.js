@@ -214,7 +214,7 @@ $(document).ready(function () {
 				flashlight_on = !flashlight_on;
 				break;
 			case DEBUG_KEY:
-				debug_mode_on = !debug_mode_on;
+				//debug_mode_on = !debug_mode_on;
 				break;
 		}
 	});
