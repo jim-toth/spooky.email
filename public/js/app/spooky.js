@@ -39,6 +39,7 @@ $(document).ready(function () {
 	var DEBUG_KEY = 68; // d
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
+	var DEFAULT_CANVAS_CURSOR = 'none';
 
 	// toggle variable for flashlight on/off
 	var flashlight_on = true;
@@ -75,8 +76,8 @@ $(document).ready(function () {
 		return Math.floor(Math.random() * (VELOCITY_MOD_MAX - VELOCITY_MOD_MIN + 1)) + VELOCITY_MOD_MIN;
 	};
 
-	// Generates a new spooky image object
-	function spookyImage(name, src, clickable, clickEvent, cursor_img) {
+	// Generates a new spooky image object, factory method
+	function spookyImage(name, src, clickable, clickEvent, cursorImg) {
 		var oSpooky = {
 			name: name,
 			src: src,
@@ -84,7 +85,8 @@ $(document).ready(function () {
 			x: -1,
 			y: -1,
 			clickable: clickable,
-			clickEvent: clickEvent
+			clickEvent: clickEvent,
+			cursorImg: cursorImg
 		};
 
 		oSpooky.img.src = src;
@@ -234,18 +236,41 @@ $(document).ready(function () {
 		}
 	});
 
+	// Catch canvas mousemove
+	jqCanvas.addEventListener('mousemove', function (ev) {
+		ev.preventDefault();
+
+		// Reset cursor to default
+		$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
+
+		// Loop through images to see if we need to update cursor
+		for (var i=0; i < images.length; i++) {
+			// If the image has a cursor
+			if(images[i].cursorImg) {
+
+				// Check if the cursor is within an image's bounds
+				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
+					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
+					
+					// Image hover over, update cursor
+					$(jqCanvas).css('cursor', 'url('+images[i].cursorImg+'), auto');
+				}
+			}
+		}
+	});
+
 
 	// Track image assets, make them clickable
 	// Github logo
 	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
 		// Open github
 		window.open('https://github.com/jim-toth', '_blank');
-	}));
+	}, 'media/debug_cursor.png'));
 	// Twitter logo
 	images.push(spookyImage('twitter-logo', 'media/TwitterLogo_white.png', true, function () {
 		// Open twitter
 		window.open('https://twitter.com/letifarz', '_blank');
-	}));
+	}, 'media/debug_cursor.png'));
 
 	// Generate raindrops
 	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i++) {
