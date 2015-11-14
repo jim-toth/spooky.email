@@ -4,8 +4,6 @@ $(document).ready(function () {
 	var DEFAULT_VELOCITY = 20;
 	var RAINDROP_WIDTH = 1;
 	var RAINDROP_HEIGHT = 1;
-	var VELOCITY_MOD_MIN = -10;
-	var VELOCITY_MOD_MAX = 10;
 	var RAIN_FILL_STYLE = 'aqua';
 	var FLASHLIGHT_RADIUS_1 = 150;
 	var FLASHLIGHT_RADIUS_2 = 175;

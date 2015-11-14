@@ -1,3 +1,6 @@
+var VELOCITY_MOD_MAX = 10;
+var VELOCITY_MOD_MIN = -10;
+
 // Creates a raindrop object, factory function
 function raindrop(startX, startY, velocity) {
 	return {
