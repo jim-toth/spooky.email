@@ -1,2 +1,7 @@
 spooky.email.sublime-workspace
-bin/www
+bin/*
+node_modules/*
+routes/*
+views/*
+app.js
+package.json

@@ -11,7 +11,7 @@ $(document).ready(function () {
 	var DEBUG_KEY = 68; // d
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
-	var DEFAULT_CANVAS_CURSOR = 'none';
+	var DEFAULT_CANVAS_CURSOR = 'default';
 
 	// Image assets
 	var images = [];
@@ -178,14 +178,19 @@ $(document).ready(function () {
 		// Loop through images to see if we need to update cursor
 		for (var i=0; i < images.length; i++) {
 			// If the image has a cursor
-			if(images[i].cursorImg) {
+			if(images[i].cursorImg || images[i].clickable) {
 
 				// Check if the cursor is within an image's bounds
 				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
 					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
 					
 					// Image hover over, update cursor
-					$(jqCanvas).css('cursor', 'url('+images[i].cursorImg+'), auto');
+					if(images[i].cursorImg) {
+						$(jqCanvas).css('cursor', 'url('+images[i].cursorImg+'), auto');
+					} else if(images[i].clickable) {
+						$(jqCanvas).css('cursor', 'pointer');
+					}
+					
 				}
 			}
 		}
@@ -227,12 +232,12 @@ $(document).ready(function () {
 	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
 		// Open github
 		window.open('https://github.com/jim-toth', '_blank');
-	}, 'media/debug_cursor.png'));
+	}));
 	// Twitter logo
 	images.push(spookyImage('twitter-logo', 'media/TwitterLogo_white.png', true, function () {
 		// Open twitter
 		window.open('https://twitter.com/letifarz', '_blank');
-	}, 'media/debug_cursor.png'));
+	}));
 
 	// Generate raindrops
 	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i++) {
