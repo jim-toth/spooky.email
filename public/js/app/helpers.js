@@ -33,8 +33,16 @@ function generateVelocityMod() {
 	return Math.floor(Math.random() * (VELOCITY_MOD_MAX - VELOCITY_MOD_MIN + 1)) + VELOCITY_MOD_MIN;
 };
 
+// Helper function to determine if an event was within bounds of an image
+function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
+	return eventX >= imageX
+		&& eventX <= (imageX + imageWidth)
+		&& eventY >= imageY
+		&& eventY <= (imageY + imageHeight);
+};
+
 // Copies text to clipboard
 function CopyToClipboard(text) {
 	Copied = text.createTextRange();
 	Copied.execCommand("Copy");
-}
+};

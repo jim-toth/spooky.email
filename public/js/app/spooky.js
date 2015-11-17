@@ -204,10 +204,12 @@ $(document).ready(function () {
 			if(images[i].cursorImg || images[i].clickable) {
 
 				// Check if the cursor is within an image's bounds
-				if (ev.clientX >= images[i].x
-					&& ev.clientX <= (images[i].x+images[i].img.width)
-					&& ev.clientY >= images[i].y
-					&& ev.clientY <= (images[i].y+images[i].img.height)) {
+				if (withinBounds(ev.clientX,
+						ev.clientY,
+						images[i].x,
+						images[i].y,
+						images[i].img.width,
+						images[i].img.height)) {
 					
 					// Image hover over, update cursor
 					if(images[i].cursorImg) {
@@ -245,10 +247,12 @@ $(document).ready(function () {
 			// If the image is clickable and loaded...
 			if (images[i].clickable && images[i].img.complete) {
 				// Check if the click was on within an image's bounds
-				if (ev.clientX >= images[i].x
-					&& ev.clientX <= (images[i].x+images[i].img.width)
-					&& ev.clientY >= images[i].y
-					&& ev.clientY <= (images[i].y+images[i].img.height)) {
+				if(withinBounds(ev.clientX,
+						ev.clientY,
+						images[i].x,
+						images[i].y,
+						images[i].img.width,
+						images[i].img.height)) {
 					// Image clicked, trigger image click event
 					images[i].clickEvent();
 				}
