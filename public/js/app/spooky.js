@@ -82,7 +82,10 @@ $(document).ready(function () {
 		canvasContext.fillStyle = 'grey';
 		canvasContext.font = '72px Verdana';
 		canvasContext.textAlign = 'center';
-		canvasContext.fillText('jim@spooky.email', jqCanvas.width/2, jqCanvas.height/2);
+		canvasContext.fillText(
+			'jim@spooky.email',
+			jqCanvas.width/2,
+			jqCanvas.height/2);
 
 		// Draw images
 		for (var i=0; i < images.length; i++) {
@@ -107,7 +110,12 @@ $(document).ready(function () {
 				}
 
 				// Draw image
-				canvasContext.drawImage(images[i].img, images[i].x, images[i].y, LOGO_SIZE, LOGO_SIZE);
+				canvasContext.drawImage(
+					images[i].img,
+					images[i].x,
+					images[i].y,
+					LOGO_SIZE,
+					LOGO_SIZE);
 			}
 		}
 
@@ -115,13 +123,18 @@ $(document).ready(function () {
 		$.each(rain, function (idx, drop) {
 			// Draw drop
 			canvasContext.fillStyle = RAIN_FILL_STYLE;
-			canvasContext.fillRect(drop.x, drop.y, RAINDROP_WIDTH, RAINDROP_HEIGHT);
+			canvasContext.fillRect(
+				drop.x,
+				drop.y,
+				RAINDROP_WIDTH,
+				RAINDROP_HEIGHT);
 
 			// Animate
 			if (drop.y + drop.velocity <= jqCanvas.height) {
 				drop.y = drop.y + drop.velocity;
 			} else {
-				// When raindrop reaches bottom of screen, reset position to top
+				// When raindrop reaches bottom of screen,
+				// reset position to top
 				drop.y = 0;
 
 				// Set a new random velocity
@@ -140,7 +153,13 @@ $(document).ready(function () {
 		// flashlight
 		if (flashlight_on) {
 			//maskContext.translate(cursor_pos.x, cursor_pos.y);
-			var grd = maskContext.createRadialGradient(cursor_pos.x, cursor_pos.y, FLASHLIGHT_RADIUS_1, cursor_pos.x, cursor_pos.y, FLASHLIGHT_RADIUS_2);
+			var grd = maskContext.createRadialGradient(
+				cursor_pos.x,
+				cursor_pos.y,
+				FLASHLIGHT_RADIUS_1,
+				cursor_pos.x,
+				cursor_pos.y,
+				FLASHLIGHT_RADIUS_2);
 			grd.addColorStop(0, 'white');
 			grd.addColorStop(1, 'rgba(255,255,255,0.1)');
 			maskContext.fillStyle = grd;
@@ -185,12 +204,16 @@ $(document).ready(function () {
 			if(images[i].cursorImg || images[i].clickable) {
 
 				// Check if the cursor is within an image's bounds
-				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
-					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
+				if (ev.clientX >= images[i].x
+					&& ev.clientX <= (images[i].x+images[i].img.width)
+					&& ev.clientY >= images[i].y
+					&& ev.clientY <= (images[i].y+images[i].img.height)) {
 					
 					// Image hover over, update cursor
 					if(images[i].cursorImg) {
-						$(jqCanvas).css('cursor', 'url('+images[i].cursorImg+'), auto');
+						$(jqCanvas).css(
+							'cursor',
+							'url('+images[i].cursorImg+'), auto');
 					} else if(images[i].clickable) {
 						$(jqCanvas).css('cursor', 'pointer');
 					}
@@ -222,8 +245,10 @@ $(document).ready(function () {
 			// If the image is clickable and loaded...
 			if (images[i].clickable && images[i].img.complete) {
 				// Check if the click was on within an image's bounds
-				if (ev.clientX >= images[i].x && ev.clientX <= (images[i].x+images[i].img.width) &&
-					ev.clientY >= images[i].y && ev.clientY <= (images[i].y+images[i].img.height)) {
+				if (ev.clientX >= images[i].x
+					&& ev.clientX <= (images[i].x+images[i].img.width)
+					&& ev.clientY >= images[i].y
+					&& ev.clientY <= (images[i].y+images[i].img.height)) {
 					// Image clicked, trigger image click event
 					images[i].clickEvent();
 				}
@@ -233,15 +258,30 @@ $(document).ready(function () {
 
 	// Track image assets, make them clickable
 	// Github logo
-	images.push(spookyImage('github-logo', 'media/GitHub-Mark-120px-plus.png', true, function () {
-		// Open github
-		window.open('https://github.com/jim-toth', '_blank');
-	}));
+	images.push(
+		spookyImage(
+			'github-logo',
+			'media/GitHub-Mark-120px-plus.png',
+			true,
+			function () {
+				// Open github
+				window.open('https://github.com/jim-toth', '_blank');
+			}
+		)
+	);
+
 	// Twitter logo
-	images.push(spookyImage('twitter-logo', 'media/TwitterLogo_white.png', true, function () {
-		// Open twitter
-		window.open('https://twitter.com/letifarz', '_blank');
-	}));
+	images.push(
+		spookyImage(
+			'twitter-logo',
+			'media/TwitterLogo_white.png',
+			true,
+			function () {
+				// Open twitter
+				window.open('https://twitter.com/letifarz', '_blank');
+			}
+		)
+	);
 
 	// Generate raindrops
 	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i++) {
@@ -259,9 +299,9 @@ var spookyString = spookyLine + '~~~(.  .)~~~\n'
 					+ spookyLine + 	'\\__      __/\n';
 for (var i=0; i < spookyWord.length; i++) {
 	if(i % 2 == 0) {
-		spookyString += spookyLine + '   )  ' + spookyWord.substr(i,1) + '  )\n';
+		spookyString += spookyLine+'   )  '+spookyWord.substr(i,1)+'  )\n';
 	} else {
-		spookyString += spookyLine + '  (   ' + spookyWord.substr(i,1) + ' (\n';
+		spookyString += spookyLine+'  (   '+spookyWord.substr(i,1)+' (\n';
 	}
 }
 spookyString += spookyLine + 	'   \\    /\n'
