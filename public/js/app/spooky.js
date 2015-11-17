@@ -66,6 +66,10 @@ $(document).ready(function () {
 		// Set up draw function to loop
 		requestAnimationFrame(draw);
 
+		// Update canvas dimensions to handle window resize
+		jqCanvas.width = window.innerWidth;
+		jqCanvas.height = window.innerHeight;
+
 		// Reset
 		canvasContext.globalCompositeOperation = 'source-over';
 		canvasContext.clearRect(0, 0, jqCanvas.width, jqCanvas.height);
