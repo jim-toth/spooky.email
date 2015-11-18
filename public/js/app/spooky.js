@@ -12,6 +12,7 @@ $(document).ready(function () {
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'default';
+	var EMAIL_TEXT = 'jim@spooky.email';
 
 	// Image assets
 	var images = [];
@@ -27,6 +28,10 @@ $(document).ready(function () {
 
 	// Track cursor position
 	var cursor_pos = { x: -1000, y: -1000 };
+
+	// track center text width/height for calculations
+	var email_text_width = 0;
+	var email_text_height = 72;
 
 	// Grab Audio Context
 	var audioContext;
@@ -82,8 +87,9 @@ $(document).ready(function () {
 		canvasContext.fillStyle = 'grey';
 		canvasContext.font = '72px Verdana';
 		canvasContext.textAlign = 'center';
+		email_text_width = canvasContext.measureText(EMAIL_TEXT).width;
 		canvasContext.fillText(
-			'jim@spooky.email',
+			EMAIL_TEXT,
 			jqCanvas.width/2,
 			jqCanvas.height/2);
 
@@ -223,6 +229,16 @@ $(document).ready(function () {
 				}
 			}
 		}
+
+		// Email text
+		if(withinBounds(ev.clientX,
+				ev.clientY,
+				(jqCanvas.width/2 - (email_text_width/2)),
+				jqCanvas.height/2 - (email_text_height/2),
+				email_text_width,
+				email_text_height)) {
+			$(jqCanvas).css('cursor', 'pointer');
+		}
 	});
 
 	// Catch key presses
@@ -243,6 +259,7 @@ $(document).ready(function () {
 	jqCanvas.addEventListener('click', function (ev) {
 		ev.preventDefault();
 
+		// Check all images
 		for (var i=0; i < images.length; i++) {
 			// If the image is clickable and loaded...
 			if (images[i].clickable && images[i].img.complete) {
@@ -257,6 +274,20 @@ $(document).ready(function () {
 					images[i].clickEvent();
 				}
 			}
+		}
+
+		// Check email text
+		if(withinBounds(ev.clientX,
+				ev.clientY,
+				(jqCanvas.width/2 - (email_text_width/2)),
+				jqCanvas.height/2 - (email_text_height/2),
+				email_text_width,
+				email_text_height)) {
+			// copy text to clipboard
+			console.log('copy text to clipboard!');
+
+			// notify user
+
 		}
 	});
 
