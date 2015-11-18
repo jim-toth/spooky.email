@@ -9,3 +9,8 @@ canvas {
 	z-index: 1;
 	cursor:  none;
 }
+
+.email {
+	position: absolute;
+	left: -9999;
+}

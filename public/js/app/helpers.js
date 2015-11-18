@@ -42,7 +42,14 @@ function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
 };
 
 // Copies text to clipboard
-function CopyToClipboard(text) {
-	Copied = text.createTextRange();
-	Copied.execCommand("Copy");
+function CopyEmailToClipboard() {
+	var emailLink = document.querySelector('.email');
+	var range = document.createRange();
+	range.selectNode(emailLink);
+	window.getSelection().addRange(range);
+	try {
+		var success = document.execCommand('copy');
+	} catch (err) {
+		console.log(err);
+	}
 };

@@ -284,10 +284,10 @@ $(document).ready(function () {
 				email_text_width,
 				email_text_height)) {
 			// copy text to clipboard
-			console.log('copy text to clipboard!');
+			CopyEmailToClipboard();
 
 			// notify user
-
+			console.log('copied text to clipboard!');
 		}
 	});
 
