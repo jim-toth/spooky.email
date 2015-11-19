@@ -284,7 +284,7 @@ $(document).ready(function () {
 				email_text_width,
 				email_text_height)) {
 			// copy text to clipboard
-			CopyEmailToClipboard();
+			CopyEmailToClipboard(EMAIL_TEXT);
 
 			// notify user
 			console.log('copied text to clipboard!');
