@@ -43,7 +43,7 @@ function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
 
 // Copies text to clipboard
 function CopyEmailToClipboard() {
-	var emailLink = document.querySelector('.email');
+	var emailLink = document.querySelector('.offscreen-text');
 	var range = document.createRange();
 	range.selectNode(emailLink);
 	window.getSelection().addRange(range);
@@ -52,4 +52,23 @@ function CopyEmailToClipboard() {
 	} catch (err) {
 		console.log(err);
 	}
+};
+
+// Spooky console art
+function spookyConsoleArt() {
+	var spookyWord = 'SPOOOOOOOOOKY';
+	var spookyLine = '.\t\t\t';
+	var spookyString = spookyLine + '~~~(.  .)~~~\n'
+						+ spookyLine + 	'\\__      __/\n';
+	for (var i=0; i < spookyWord.length; i++) {
+		if(i % 2 == 0) {
+			spookyString += spookyLine+'   )  '+spookyWord.substr(i,1)+'  )\n';
+		} else {
+			spookyString += spookyLine+'  (   '+spookyWord.substr(i,1)+' (\n';
+		}
+	}
+	spookyString += spookyLine + 	'   \\    /\n'
+					+ spookyLine + 	'    \\  /\n'
+					+ spookyLine + 	'     \\/';
+	console.log(spookyString);
 };

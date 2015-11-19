@@ -10,7 +10,7 @@ canvas {
 	cursor:  none;
 }
 
-.email {
+.offscreen-text {
 	position: absolute;
 	left: -9999;
 }
