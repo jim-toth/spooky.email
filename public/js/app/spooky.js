@@ -164,39 +164,33 @@ var SpookyEngine = function (canvas_id) {
 		}
 	});
 
-	// Track image assets, make them clickable
-	// Github logo
-	images.push(
-		spookyImage(
-			'github-logo',
-			'media/GitHub-Mark-120px-plus.png',
-			true,
-			function () {
-				// Open github
-				window.open('https://github.com/jim-toth', '_blank');
-			}
-		)
-	);
-
-	// Twitter logo
-	images.push(
-		spookyImage(
-			'twitter-logo',
-			'media/TwitterLogo_white.png',
-			true,
-			function () {
-				// Open twitter
-				window.open('https://twitter.com/letifarz', '_blank');
-			}
-		)
-	);
-
 	// Generate raindrops
 	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i++) {
 		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
 	}
 
 	return {
+		// Add an image
+		addImage: function (name, src, clickable, link, cursorImg) {
+			var oSpooky = {
+				name: name,
+				src: src,
+				img: new Image(),
+				x: -1,
+				y: -1,
+				clickable: clickable,
+				clickEvent: function () {
+					window.open(link, '_blank');
+				},
+				cursorImg: cursorImg
+			};
+
+			// Set img.src, begins loading the image
+			oSpooky.img.src = src;
+
+			images.push(oSpooky);
+		},
+
 		// Draw function
 		draw: function draw() {
 			// Set up draw function to loop
