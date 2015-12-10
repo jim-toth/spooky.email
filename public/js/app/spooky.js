@@ -79,11 +79,34 @@ var SpookyEngine = function (canvas_id) {
 		// Reset cursor to default
 		$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
 
+		// Loop through texts to see if we need to update cursor
+		for (var i=0; i < texts.length; i++) {
+			// If the text has a cursor
+			if(texts[i].options.cursorImg || texts[i].options.clickable) {
+				// Check if the cursor is within a text's bounds
+				if(withinBounds(
+					ev.clientX,
+					ev.clientY,
+					resolvePosition(texts[i].x, jqCanvas.width)-(canvasContext.measureText(texts[i].text).width/2),
+					resolvePosition(texts[i].y, jqCanvas.height)-(texts[i].options.height/2),
+					canvasContext.measureText(texts[i].text).width,
+					texts[i].options.height)) {
+					// Text is being hovered over, update cursor
+					if(texts[i].options.cursorImg) {
+						$(jqCanvas).css(
+							'cursor',
+							'url('+texts[i].options.cursorImg+'), auto');
+					} else if (texts[i].options.clickable) {
+						$(jqCanvas).css('cursor', 'pointer');
+					}
+				}
+			}
+		}
+
 		// Loop through images to see if we need to update cursor
 		for (var i=0; i < images.length; i++) {
 			// If the image has a cursor
 			if(images[i].cursorImg || images[i].clickable) {
-
 				// Check if the cursor is within an image's bounds
 				if (withinBounds(ev.clientX,
 						ev.clientY,
@@ -91,8 +114,7 @@ var SpookyEngine = function (canvas_id) {
 						images[i].y,
 						images[i].img.width,
 						images[i].img.height)) {
-					
-					// Image hover over, update cursor
+					// Image is being hovered over, update cursor
 					if(images[i].cursorImg) {
 						$(jqCanvas).css(
 							'cursor',
@@ -103,16 +125,6 @@ var SpookyEngine = function (canvas_id) {
 					
 				}
 			}
-		}
-
-		// Email text
-		if(withinBounds(ev.clientX,
-				ev.clientY,
-				(jqCanvas.width/2 - (email_text_width/2)),
-				jqCanvas.height/2 - (email_text_height/2),
-				email_text_width,
-				email_text_height)) {
-			$(jqCanvas).css('cursor', 'pointer');
 		}
 	});
 
