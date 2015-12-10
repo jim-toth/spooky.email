@@ -170,6 +170,12 @@ var SpookyEngine = function (canvas_id) {
 	}
 
 	return {
+		// Let the games begin!
+		// Kicks off the SpookyEngine
+		haunt: function () {
+			draw();
+		},
+
 		// Add an image
 		addImage: function (name, src, clickable, link, cursorImg) {
 			var oSpooky = {
