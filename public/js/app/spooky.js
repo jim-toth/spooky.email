@@ -1,4 +1,4 @@
-$(document).ready(function () {
+var SpookyEngine = function () {
 	// Constants
 	var MAX_RAINDROPS = 100;
 	var DEFAULT_VELOCITY = 20;
@@ -65,135 +65,6 @@ $(document).ready(function () {
 	debugCanvas.width = jqCanvas.width;
 	debugCanvas.height = jqCanvas.height;
 	var debugContext = debugCanvas.getContext('2d');
-
-	// Draw function
-	function draw() {
-		// Set up draw function to loop
-		requestAnimationFrame(draw);
-
-		// Update canvas dimensions to handle window resize
-		jqCanvas.width = window.innerWidth;
-		jqCanvas.height = window.innerHeight;
-
-		// Reset
-		canvasContext.globalCompositeOperation = 'source-over';
-		canvasContext.clearRect(0, 0, jqCanvas.width, jqCanvas.height);
-
-		// Fill canvas background
-		canvasContext.fillStyle = 'black';
-		canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
-
-		// Center text
-		canvasContext.fillStyle = 'grey';
-		canvasContext.font = '72px Verdana';
-		canvasContext.textAlign = 'center';
-		email_text_width = canvasContext.measureText(EMAIL_TEXT).width;
-		canvasContext.fillText(
-			EMAIL_TEXT,
-			jqCanvas.width/2,
-			jqCanvas.height/2);
-
-		// Draw images
-		for (var i=0; i < images.length; i++) {
-			// If the image is loaded
-			if (images[i].img.complete) {
-				// Update image positions
-				if (images[i].x == -1 || images[i].y == -1) {
-					switch (images[i].name) {
-						// Github logo center bottom
-						case 'github-logo':
-							images[i].x = (jqCanvas.width/2)-(LOGO_SIZE/2);
-							images[i].y = jqCanvas.height - LOGO_SIZE - 25;
-							break;
-						// Twitter logo bottom right
-						case 'twitter-logo':
-							images[i].x = jqCanvas.width - LOGO_SIZE;
-							images[i].y = jqCanvas.height - LOGO_SIZE;
-							break;
-						default:
-							break;
-					}
-				}
-
-				// Draw image
-				canvasContext.drawImage(
-					images[i].img,
-					images[i].x,
-					images[i].y,
-					LOGO_SIZE,
-					LOGO_SIZE);
-			}
-		}
-
-		// Draw Raindrops
-		$.each(rain, function (idx, drop) {
-			// Draw drop
-			canvasContext.fillStyle = RAIN_FILL_STYLE;
-			canvasContext.fillRect(
-				drop.x,
-				drop.y,
-				RAINDROP_WIDTH,
-				RAINDROP_HEIGHT);
-
-			// Animate
-			if (drop.y + drop.velocity <= jqCanvas.height) {
-				drop.y = drop.y + drop.velocity;
-			} else {
-				// When raindrop reaches bottom of screen,
-				// reset position to top
-				drop.y = 0;
-
-				// Set a new random velocity
-				drop.velocity = DEFAULT_VELOCITY + generateVelocityMod();
-			}
-		});
-
-		// Spooky opacity filter!
-		// clear mask context
-		maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
-
-		// fill with opacity settings
-		maskContext.fillStyle = 'rgba(0,0,0,0.85)';
-		maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
-
-		// flashlight
-		if (flashlight_on) {
-			//maskContext.translate(cursor_pos.x, cursor_pos.y);
-			var grd = maskContext.createRadialGradient(
-				cursor_pos.x,
-				cursor_pos.y,
-				FLASHLIGHT_RADIUS_1,
-				cursor_pos.x,
-				cursor_pos.y,
-				FLASHLIGHT_RADIUS_2);
-			grd.addColorStop(0, 'white');
-			grd.addColorStop(1, 'rgba(255,255,255,0.1)');
-			maskContext.fillStyle = grd;
-			maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
-		}
-
-		// Draw mask canvas to main canvas
-		// NB: multiply mode to create the opaque filter effect
-		canvasContext.globalCompositeOperation = 'multiply';
-		canvasContext.drawImage(maskCanvas, 0, 0);
-		canvasContext.globalCompositeOperation = 'source-over';
-
-		// debug mode
-		if (debug_mode_on) {
-			// clear debug context
-			debugContext.clearRect(0,0,debugCanvas.width, debugCanvas.height);
-
-			// debug mode logo
-			debugContext.fillStyle = 'red';
-			debugContext.font = '32px Verdana';
-			debugContext.textAlign = 'center';
-			debugContext.fillText('DEBUG', jqCanvas.width/2, 72);
-
-			// Draw debug canvas to main canvas
-			canvasContext.drawImage(debugCanvas, 0, 0);
-		}
-	};
-
 
 	// Initialize mouse cursor update function
 	$('canvas#spooky_canvas').mousemove(function (ev) {
@@ -323,8 +194,133 @@ $(document).ready(function () {
 		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
 	}
 
-	// Kick it off
-	draw();
-});
+	return {
+		// Draw function
+		draw: function draw() {
+			// Set up draw function to loop
+			requestAnimationFrame(draw);
 
-spookyConsoleArt();
+			// Update canvas dimensions to handle window resize
+			jqCanvas.width = window.innerWidth;
+			jqCanvas.height = window.innerHeight;
+
+			// Reset
+			canvasContext.globalCompositeOperation = 'source-over';
+			canvasContext.clearRect(0, 0, jqCanvas.width, jqCanvas.height);
+
+			// Fill canvas background
+			canvasContext.fillStyle = 'black';
+			canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
+
+			// Center text
+			canvasContext.fillStyle = 'grey';
+			canvasContext.font = '72px Verdana';
+			canvasContext.textAlign = 'center';
+			email_text_width = canvasContext.measureText(EMAIL_TEXT).width;
+			canvasContext.fillText(
+				EMAIL_TEXT,
+				jqCanvas.width/2,
+				jqCanvas.height/2);
+
+			// Draw images
+			for (var i=0; i < images.length; i++) {
+				// If the image is loaded
+				if (images[i].img.complete) {
+					// Update image positions
+					if (images[i].x == -1 || images[i].y == -1) {
+						switch (images[i].name) {
+							// Github logo center bottom
+							case 'github-logo':
+								images[i].x = (jqCanvas.width/2)-(LOGO_SIZE/2);
+								images[i].y = jqCanvas.height - LOGO_SIZE - 25;
+								break;
+							// Twitter logo bottom right
+							case 'twitter-logo':
+								images[i].x = jqCanvas.width - LOGO_SIZE;
+								images[i].y = jqCanvas.height - LOGO_SIZE;
+								break;
+							default:
+								break;
+						}
+					}
+
+					// Draw image
+					canvasContext.drawImage(
+						images[i].img,
+						images[i].x,
+						images[i].y,
+						LOGO_SIZE,
+						LOGO_SIZE);
+				}
+			}
+
+			// Draw Raindrops
+			$.each(rain, function (idx, drop) {
+				// Draw drop
+				canvasContext.fillStyle = RAIN_FILL_STYLE;
+				canvasContext.fillRect(
+					drop.x,
+					drop.y,
+					RAINDROP_WIDTH,
+					RAINDROP_HEIGHT);
+
+				// Animate
+				if (drop.y + drop.velocity <= jqCanvas.height) {
+					drop.y = drop.y + drop.velocity;
+				} else {
+					// When raindrop reaches bottom of screen,
+					// reset position to top
+					drop.y = 0;
+
+					// Set a new random velocity
+					drop.velocity = DEFAULT_VELOCITY + generateVelocityMod();
+				}
+			});
+
+			// Spooky opacity filter!
+			// clear mask context
+			maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
+
+			// fill with opacity settings
+			maskContext.fillStyle = 'rgba(0,0,0,0.85)';
+			maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
+
+			// flashlight
+			if (flashlight_on) {
+				//maskContext.translate(cursor_pos.x, cursor_pos.y);
+				var grd = maskContext.createRadialGradient(
+					cursor_pos.x,
+					cursor_pos.y,
+					FLASHLIGHT_RADIUS_1,
+					cursor_pos.x,
+					cursor_pos.y,
+					FLASHLIGHT_RADIUS_2);
+				grd.addColorStop(0, 'white');
+				grd.addColorStop(1, 'rgba(255,255,255,0.1)');
+				maskContext.fillStyle = grd;
+				maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+			}
+
+			// Draw mask canvas to main canvas
+			// NB: multiply mode to create the opaque filter effect
+			canvasContext.globalCompositeOperation = 'multiply';
+			canvasContext.drawImage(maskCanvas, 0, 0);
+			canvasContext.globalCompositeOperation = 'source-over';
+
+			// debug mode
+			if (debug_mode_on) {
+				// clear debug context
+				debugContext.clearRect(0,0,debugCanvas.width, debugCanvas.height);
+
+				// debug mode logo
+				debugContext.fillStyle = 'red';
+				debugContext.font = '32px Verdana';
+				debugContext.textAlign = 'center';
+				debugContext.fillText('DEBUG', jqCanvas.width/2, 72);
+
+				// Draw debug canvas to main canvas
+				canvasContext.drawImage(debugCanvas, 0, 0);
+			}
+		}
+	}
+}
