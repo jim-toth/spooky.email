@@ -1,4 +1,4 @@
-var SpookyEngine = function () {
+var SpookyEngine = function (canvas_id) {
 	// Constants
 	var MAX_RAINDROPS = 100;
 	var DEFAULT_VELOCITY = 20;
@@ -13,6 +13,8 @@ var SpookyEngine = function () {
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'default';
 	var EMAIL_TEXT = 'jim@spooky.email';
+
+	var canvas_id = canvas_id;
 
 	// Image assets
 	var images = [];
@@ -47,7 +49,7 @@ var SpookyEngine = function () {
 	}
 
 	// Grab canvas and canvas context
-	var jqCanvas = $('canvas#spooky_canvas')[0];
+	var jqCanvas = $(canvas_id)[0];
 	var canvasContext = jqCanvas.getContext('2d');
 
 	// Set canvas height and width to fit page
@@ -67,7 +69,7 @@ var SpookyEngine = function () {
 	var debugContext = debugCanvas.getContext('2d');
 
 	// Initialize mouse cursor update function
-	$('canvas#spooky_canvas').mousemove(function (ev) {
+	$(canvas_id).mousemove(function (ev) {
 		// Track cursor position
 		cursor_pos.x = ev.pageX;
 		cursor_pos.y = ev.pageY;
