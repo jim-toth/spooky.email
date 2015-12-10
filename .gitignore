@@ -5,3 +5,4 @@ routes/*
 views/*
 app.js
 package.json
+npm-debug.log
