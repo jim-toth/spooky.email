@@ -1,10 +1,12 @@
 $(document).ready(function () {
+	var emailText = "jim@spooky.email";
+
 	// Create a SpookyEngine, passing in selector for target canvas
 	var spooky = SpookyEngine("canvas#spooky_canvas");
 
 	// Add email text
 	spooky.addText(
-		"jim@spooky.email",
+		emailText,
 		"center",
 		"center",
 		{
@@ -14,7 +16,8 @@ $(document).ready(function () {
 			textAlign: "center",
 			height: 72,
 			clickEvent: function () {
-				console.log('email clicked!');
+				// Copy text to clipboard
+				CopyEmailToClipboard(emailText);
 			}
 		}
 	);

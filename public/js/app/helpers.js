@@ -60,6 +60,9 @@ function CopyEmailToClipboard(text) {
 	window.getSelection().addRange(range);
 	try {
 		var success = document.execCommand('copy');
+		
+		// Notify console
+		console.log('Copied text to clipboard!');
 	} catch (err) {
 		console.log(err);
 	}

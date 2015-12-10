@@ -173,20 +173,6 @@ var SpookyEngine = function (canvas_id) {
 				}
 			}
 		}
-
-		// Check email text
-		if(withinBounds(ev.clientX,
-				ev.clientY,
-				(jqCanvas.width/2 - (email_text_width/2)),
-				jqCanvas.height/2 - (email_text_height/2),
-				email_text_width,
-				email_text_height)) {
-			// copy text to clipboard
-			CopyEmailToClipboard(EMAIL_TEXT);
-
-			// notify user
-			console.log('copied text to clipboard!');
-		}
 	});
 
 	// Generate raindrops
