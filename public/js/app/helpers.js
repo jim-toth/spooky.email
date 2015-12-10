@@ -23,6 +23,12 @@ function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
 		&& eventY <= (imageY + imageHeight);
 };
 
+// Helper function to determine if the spooky asset is set to a specific alignment for x or y positions
+// Returns (calculated, if necessary) coordinate
+function resolvePosition(pos, canvasDimension) {
+	return pos === "center" ? canvasDimension/2 : pos;
+};
+
 // Copies text to clipboard
 // NB: Text can only be copied from the DOM
 function CopyEmailToClipboard(text) {

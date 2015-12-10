@@ -3,6 +3,6 @@ bin/*
 node_modules/*
 routes/*
 views/*
-app.js
+/app.js
 package.json
 npm-debug.log

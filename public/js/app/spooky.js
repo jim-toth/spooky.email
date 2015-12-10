@@ -12,9 +12,11 @@ var SpookyEngine = function (canvas_id) {
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'default';
-	var EMAIL_TEXT = 'jim@spooky.email';
 
 	var canvas_id = canvas_id;
+
+	// Text assets
+	var texts = [];
 
 	// Image assets
 	var images = [];
@@ -132,17 +134,40 @@ var SpookyEngine = function (canvas_id) {
 	jqCanvas.addEventListener('click', function (ev) {
 		ev.preventDefault();
 
+		// Check all texts
+		for (var i=0; i < texts.length; i++) {
+			// If the text is clickable and has a clickEvent defined
+			if (texts[i].options
+				&& texts[i].options.clickable
+				&& texts[i].options.clickEvent) {
+				// Check if the click was with a text's bounds
+				if(withinBounds(
+					ev.clientX,
+					ev.clientY,
+					resolvePosition(texts[i].x, jqCanvas.width)-(canvasContext.measureText(texts[i].text).width/2),
+					resolvePosition(texts[i].y, jqCanvas.height)-(texts[i].options.height/2),
+					canvasContext.measureText(texts[i].text).width,
+					texts[i].options.height)) {
+					// Text clicked, trigger text click event
+					texts[i].options.clickEvent();
+				}
+			}
+		}
+
 		// Check all images
 		for (var i=0; i < images.length; i++) {
-			// If the image is clickable and loaded...
-			if (images[i].clickable && images[i].img.complete) {
-				// Check if the click was on within an image's bounds
-				if(withinBounds(ev.clientX,
-						ev.clientY,
-						images[i].x,
-						images[i].y,
-						images[i].img.width,
-						images[i].img.height)) {
+			// If the image is clickable, has a clickEvent defined, and ready
+			if (images[i].clickable
+				&& images[i].clickEvent
+				&& images[i].img.complete) {
+				// Check if the click was within an image's bounds
+				if(withinBounds(
+					ev.clientX,
+					ev.clientY,
+					images[i].x,
+					images[i].y,
+					images[i].img.width,
+					images[i].img.height)) {
 					// Image clicked, trigger image click event
 					images[i].clickEvent();
 				}
@@ -170,15 +195,36 @@ var SpookyEngine = function (canvas_id) {
 	}
 
 	return {
-		// Let the games begin!
 		// Kicks off the SpookyEngine
 		haunt: function () {
-			draw();
+			this.draw();
+		},
+
+		// Add text
+		addText: function (text, x, y, options) {
+			// Make sure options is defined and has defaults in place
+			if (typeof options == "undefined") {
+				options = {
+					clickable: false
+				};
+			}
+
+			// Create a new spooky text object
+			var oSpookyText = {
+				text: text,
+				x: x,
+				y: y,
+				options: options
+			};
+
+			// Add to texts collection
+			texts.push(oSpookyText);
 		},
 
 		// Add an image
 		addImage: function (name, src, clickable, link, cursorImg) {
-			var oSpooky = {
+			// Create a new spooky image object
+			var oSpookyImage = {
 				name: name,
 				src: src,
 				img: new Image(),
@@ -192,14 +238,16 @@ var SpookyEngine = function (canvas_id) {
 			};
 
 			// Set img.src, begins loading the image
-			oSpooky.img.src = src;
+			oSpookyImage.img.src = src;
 
-			images.push(oSpooky);
+			// Add to images collection
+			images.push(oSpookyImage);
 		},
 
 		// Draw function
 		draw: function draw() {
 			// Set up draw function to loop
+			// TODO: fix w. "this" ?
 			requestAnimationFrame(draw);
 
 			// Update canvas dimensions to handle window resize
@@ -214,15 +262,33 @@ var SpookyEngine = function (canvas_id) {
 			canvasContext.fillStyle = 'black';
 			canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
 
-			// Center text
-			canvasContext.fillStyle = 'grey';
-			canvasContext.font = '72px Verdana';
-			canvasContext.textAlign = 'center';
-			email_text_width = canvasContext.measureText(EMAIL_TEXT).width;
-			canvasContext.fillText(
-				EMAIL_TEXT,
-				jqCanvas.width/2,
-				jqCanvas.height/2);
+			// Draw texts
+			for (var i=0; i < texts.length; i++) {
+				// Handle custom options for drawing text
+				if(texts[i].options) {
+					// fillStyle
+					if(texts[i].options.fillStyle) {
+						canvasContext.fillStyle = texts[i].options.fillStyle;
+					}
+
+					// font
+					if(texts[i].options.font) {
+						canvasContext.font = texts[i].options.font;
+					}
+
+					// textAlign
+					if(texts[i].options.textAlign) {
+						canvasContext.textAlign = texts[i].options.textAlign;
+					}
+				}
+
+				// Draw text to canvas
+				canvasContext.fillText(
+					texts[i].text,
+					resolvePosition(texts[i].x, jqCanvas.width),
+					resolvePosition(texts[i].y, jqCanvas.height)
+				);
+			}
 
 			// Draw images
 			for (var i=0; i < images.length; i++) {
@@ -252,7 +318,8 @@ var SpookyEngine = function (canvas_id) {
 						images[i].x,
 						images[i].y,
 						LOGO_SIZE,
-						LOGO_SIZE);
+						LOGO_SIZE
+					);
 				}
 			}
 
