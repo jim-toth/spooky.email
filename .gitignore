@@ -6,4 +6,4 @@ views/*
 /app.js
 package.json
 npm-debug.log
-startdev.bat
+config.bat
