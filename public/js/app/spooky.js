@@ -276,10 +276,9 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	};
 
 	// Draw function
-	this.draw = function draw() {
+	this.draw = function () {
 		// Set up draw function to loop
-		// TODO: fix w. "this" ?
-		requestAnimationFrame(draw.bind(this));
+		requestAnimationFrame(this.draw.bind(this));
 
 		// Update canvas dimensions to handle window resize
 		jqCanvas.width = window.innerWidth;
