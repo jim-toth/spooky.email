@@ -338,27 +338,27 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 		// Draw Raindrops
 		if (this.rain) {
-			$.each(rain, function (idx, drop) {
+			for (var i=0; i < rain.length; i += 1) {
 				// Draw drop
 				canvasContext.fillStyle = RAIN_FILL_STYLE;
 				canvasContext.fillRect(
-					drop.x,
-					drop.y,
+					rain[i].x,
+					rain[i].y,
 					RAINDROP_WIDTH,
 					RAINDROP_HEIGHT);
 
 				// Animate
-				if (drop.y + drop.velocity <= jqCanvas.height) {
-					drop.y = drop.y + drop.velocity;
+				if (rain[i].y + rain[i].velocity <= jqCanvas.height) {
+					rain[i].y = rain[i].y + rain[i].velocity;
 				} else {
 					// When raindrop reaches bottom of screen,
 					// reset position to top
-					drop.y = 0;
+					rain[i].y = 0;
 
 					// Set a new random velocity
-					drop.velocity = DEFAULT_VELOCITY + generateVelocityMod();
+					rain[i].velocity = DEFAULT_VELOCITY + generateVelocityMod();
 				}
-			});
+			}
 		}
 
 		// Spooky opacity filter!
