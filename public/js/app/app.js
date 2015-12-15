@@ -34,6 +34,32 @@ $(document).ready(function () {
 		}
 	});
 
+	// Add flashlight toggle
+	spooky.addText({
+		text: "FLASHLIGHT",
+		name: "flashlight-text",
+		x: 0,
+		y: 64,
+		clickable: true,
+		clickEvent: function () {
+			// Toggle flashlight
+			spooky.toggleFlashlight();
+		}
+	});
+
+	// Add rain toggle
+	spooky.addText({
+		text: "RAIN",
+		name: "rain-text",
+		x: 0,
+		y: 96,
+		clickable: true,
+		clickEvent: function () {
+			// Toggle rain
+			spooky.toggleRain();
+		}
+	});
+
 	// Add Github logo
 	spooky.addImage({
 		name: "github-logo",

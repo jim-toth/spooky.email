@@ -29,9 +29,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	// Create collection for rain to hold our raindrops
 	var rain = [];
 
-	// toggle variable for flashlight on/off
-	var flashlight_on = true;
-
 	// toggle variable for debug mode on/off
 	var debug_mode_on = false;
 
@@ -81,7 +78,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 		switch (ev.which) {
 			case FLASHLIGHT_KEY:
-				flashlight_on = !flashlight_on;
+				this.toggleFlashlight();
 				break;
 			case DEBUG_KEY:
 				//debug_mode_on = !debug_mode_on;
@@ -190,9 +187,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 	});
 
-	// Toggle rain effect on or off, default on
-	this.rain = spookyOptions.rain;
-
 	// Generate raindrops
 	this._generateRaindrops = function () {
 		// Generate raindrops
@@ -201,11 +195,23 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 	},
 
+	// Toggle rain effect on or off, default on
+	this.rain = spookyOptions.rain;
+	this.toggleRain = function () {
+		this.rain = !this.rain;
+	};
+
 	// Toggle lights on or off
 	this.lights = spookyOptions.lights;
-
 	this.toggleLights = function () {
 		this.lights = !this.lights;
+	};
+
+	// Toggle flashlight on or off
+	// default to true (on) unless specifically set to false (off)
+	this.flashlight = (spookyOptions.flashlight === false) ? false : true;
+	this.toggleFlashlight = function () {
+		this.flashlight = !this.flashlight;
 	};
 
 	// Kicks off the SpookyEngine
@@ -382,7 +388,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 			maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
 
 			// flashlight
-			if (flashlight_on) {
+			if (this.flashlight) {
 				//maskContext.translate(cursor_pos.x, cursor_pos.y);
 				var grd = maskContext.createRadialGradient(
 					cursor_pos.x,
