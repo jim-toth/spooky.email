@@ -1,26 +1,23 @@
 $(document).ready(function () {
-	var emailText = "jim@spooky.email";
-
-	// Create a SpookyEngine, passing in selector for target canvas
-	var spooky = SpookyEngine("canvas#spooky_canvas");
+	// Create a spookyEngine, passing in selector for target canvas
+	var spooky = spookyEngine("canvas#spooky_canvas");
 
 	// Add email text
-	spooky.addText(
-		emailText,
-		"center",
-		"center",
-		{
-			clickable: true,
-			fillStyle: "grey",
-			font: "72px Verdana",
-			textAlign: "center",
-			height: 72,
-			clickEvent: function () {
-				// Copy text to clipboard
-				CopyEmailToClipboard(emailText);
-			}
+	var emailText = "jim@spooky.email";
+	spooky.addText({
+		text: emailText,
+		x: "center",
+		y: "center",
+		fillStyle: "grey",
+		font: "72px Verdana",
+		textAlign: "center",
+		height: 72,
+		clickable: true,
+		clickEvent: function () {
+			// Copy text to clipboard
+			CopyEmailToClipboard(emailText);
 		}
-	);
+	});
 
 	// Add Github logo
 	spooky.addImage(
