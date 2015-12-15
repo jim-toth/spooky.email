@@ -13,6 +13,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'default';
 	var DEFAULT_FONT = '32px Verdana';
+	var DEFAULT_TEXT_HEIGHT = 32;
 	var DEFAULT_FILL_STYLE = 'white';
 	var DEFAULT_TEXT_ALIGN = 'start';
 
@@ -105,9 +106,9 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 				if (withinBounds(
 					ev.clientX,
 					ev.clientY,
-					resolvePosition(texts[i].x, jqCanvas.width)-(canvasContext.measureText(texts[i].text).width/2),
-					resolvePosition(texts[i].y, jqCanvas.height)-(texts[i].height/2),
-					canvasContext.measureText(texts[i].text).width,
+					(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
+					resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
+					texts[i].width,
 					texts[i].height)) {
 					// Text is being hovered over, update cursor
 					if (texts[i].cursorImg) {
@@ -153,14 +154,14 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		// Check all texts
 		for (var i=0; i < texts.length; i += 1) {
 			// If the text is clickable and has a clickEvent defined
-			if (texts[i] && texts[i].clickable && texts[i].clickEvent) {
+			if (texts[i].clickable && texts[i].clickEvent) {
 				// Check if the click was with a text's bounds
 				if (withinBounds(
 					ev.clientX,
 					ev.clientY,
-					resolvePosition(texts[i].x, jqCanvas.width)-(canvasContext.measureText(texts[i].text).width/2),
-					resolvePosition(texts[i].y, jqCanvas.height)-(texts[i].height/2),
-					canvasContext.measureText(texts[i].text).width,
+					resolvePosition(texts[i].x, jqCanvas.width),
+					resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
+					texts[i].width,
 					texts[i].height)) {
 					// Text clicked, trigger text click event
 					texts[i].clickEvent();
@@ -200,6 +201,13 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 	},
 
+	// Toggle lights on or off
+	this.lights = spookyOptions.lights;
+
+	this.toggleLights = function () {
+		this.lights = !this.lights;
+	};
+
 	// Kicks off the SpookyEngine
 	this.haunt = function () {
 		// generate rain
@@ -223,12 +231,12 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 			x_offset: options.x_offset || 0,
 			y_offset: options.y_offset || 0,
 			width: options.width || 0,
-			height: options.height || 0,
+			height: options.height || DEFAULT_TEXT_HEIGHT,
 			
 			// Canvas painting options
 			fillStyle: options.fillStyle || DEFAULT_FILL_STYLE,
 			font: options.font || DEFAULT_FONT,
-			textAlign: options.textAlign,
+			textAlign: options.textAlign || DEFAULT_TEXT_ALIGN,
 
 			// Click event options
 			clickable: options.clickable || false,
@@ -237,6 +245,10 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 			// Cursor hover options
 			cursorImg: options.cursorImg
 		};
+
+		// Measure text based on the font size, update .width
+		canvasContext.font = oSpookyText.font;
+		oSpookyText.width = canvasContext.measureText(oSpookyText.text).width;
 
 		// Add to texts collection
 		texts.push(oSpookyText);
@@ -361,34 +373,36 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 
 		// Spooky opacity filter!
-		// clear mask context
-		maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
+		if (!this.lights) {
+			// clear mask context
+			maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
 
-		// fill with opacity settings
-		maskContext.fillStyle = 'rgba(0,0,0,0.85)';
-		maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
+			// fill with opacity settings
+			maskContext.fillStyle = 'rgba(0,0,0,0.85)';
+			maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
 
-		// flashlight
-		if (flashlight_on) {
-			//maskContext.translate(cursor_pos.x, cursor_pos.y);
-			var grd = maskContext.createRadialGradient(
-				cursor_pos.x,
-				cursor_pos.y,
-				FLASHLIGHT_RADIUS_1,
-				cursor_pos.x,
-				cursor_pos.y,
-				FLASHLIGHT_RADIUS_2);
-			grd.addColorStop(0, 'white');
-			grd.addColorStop(1, 'rgba(255,255,255,0.1)');
-			maskContext.fillStyle = grd;
-			maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+			// flashlight
+			if (flashlight_on) {
+				//maskContext.translate(cursor_pos.x, cursor_pos.y);
+				var grd = maskContext.createRadialGradient(
+					cursor_pos.x,
+					cursor_pos.y,
+					FLASHLIGHT_RADIUS_1,
+					cursor_pos.x,
+					cursor_pos.y,
+					FLASHLIGHT_RADIUS_2);
+				grd.addColorStop(0, 'white');
+				grd.addColorStop(1, 'rgba(255,255,255,0.1)');
+				maskContext.fillStyle = grd;
+				maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+			}
+
+			// Draw mask canvas to main canvas
+			// NB: multiply mode to create the opaque filter effect
+			canvasContext.globalCompositeOperation = 'multiply';
+			canvasContext.drawImage(maskCanvas, 0, 0);
+			canvasContext.globalCompositeOperation = 'source-over';
 		}
-
-		// Draw mask canvas to main canvas
-		// NB: multiply mode to create the opaque filter effect
-		canvasContext.globalCompositeOperation = 'multiply';
-		canvasContext.drawImage(maskCanvas, 0, 0);
-		canvasContext.globalCompositeOperation = 'source-over';
 
 		// debug mode
 		if (debug_mode_on) {

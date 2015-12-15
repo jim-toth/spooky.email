@@ -7,6 +7,7 @@ $(document).ready(function () {
 	var emailText = "jim@spooky.email";
 	spooky.addText({
 		text: emailText,
+		name: "email-text",
 		x: "center",
 		y: "center",
 		fillStyle: "grey",
@@ -17,6 +18,19 @@ $(document).ready(function () {
 		clickEvent: function () {
 			// Copy text to clipboard
 			CopyEmailToClipboard(emailText);
+		}
+	});
+
+	// Add lights toggle
+	spooky.addText({
+		text: "LIGHTS",
+		name: "lights-text",
+		x: 0,
+		y: 32,
+		clickable: true,
+		clickEvent: function () {
+			// Toggle lights
+			spooky.toggleLights();
 		}
 	});
 
