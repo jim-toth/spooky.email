@@ -18,22 +18,34 @@ $(document).ready(function () {
 			CopyEmailToClipboard(emailText);
 		}
 	});
-
+	
 	// Add Github logo
-	spooky.addImage(
-		"github-logo",
-		"media/GitHub-Mark-120px-plus.png",
-		true,
-		"https://github.com/jim-toth"
-	);
+	spooky.addImage({
+		name: "github-logo",
+		x: "center",
+		y: "bottom",
+		width: 120,
+		height: 120,
+		src: "media/GitHub-Mark-120px-plus.png",
+		clickable: true,
+		clickEvent: function () {
+			window.open("https://github.com/jim-toth", '_blank');
+		}
+	});
 
 	// Add Twitter logo
-	spooky.addImage(
-		"twitter-logo",
-		"media/TwitterLogo_white.png",
-		true,
-		"https://twitter.com/letifarz"
-	);
+	spooky.addImage({
+		name: "twitter-logo",
+		x: "right",
+		y: "bottom",
+		width: 120,
+		height: 120,
+		src: "media/TwitterLogo_white.png",
+		clickable: true,
+		clickEvent: function () {
+			window.open("https://twitter.com/letifarz", '_blank');
+		}
+	});
 
 	// Let the games begin!
 	spooky.haunt();

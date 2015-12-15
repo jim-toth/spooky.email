@@ -77,7 +77,7 @@ var spookyEngine = function (canvas_id) {
 	$('body').keydown(function (ev) {
 		ev.preventDefault();
 
-		switch(ev.which) {
+		switch (ev.which) {
 			case FLASHLIGHT_KEY:
 				flashlight_on = !flashlight_on;
 				break;
@@ -97,11 +97,11 @@ var spookyEngine = function (canvas_id) {
 		$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
 
 		// Loop through texts to see if we need to update cursor
-		for (var i=0; i < texts.length; i++) {
+		for (var i=0; i < texts.length; i += 1) {
 			// If the text has a cursor
-			if(texts[i].cursorImg || texts[i].clickable) {
+			if (texts[i].cursorImg || texts[i].clickable) {
 				// Check if the cursor is within a text's bounds
-				if(withinBounds(
+				if (withinBounds(
 					ev.clientX,
 					ev.clientY,
 					resolvePosition(texts[i].x, jqCanvas.width)-(canvasContext.measureText(texts[i].text).width/2),
@@ -109,7 +109,7 @@ var spookyEngine = function (canvas_id) {
 					canvasContext.measureText(texts[i].text).width,
 					texts[i].height)) {
 					// Text is being hovered over, update cursor
-					if(texts[i].cursorImg) {
+					if (texts[i].cursorImg) {
 						$(jqCanvas).css(
 							'cursor',
 							'url('+texts[i].cursorImg+'), auto');
@@ -121,16 +121,16 @@ var spookyEngine = function (canvas_id) {
 		}
 
 		// Loop through images to see if we need to update cursor
-		for (var i=0; i < images.length; i++) {
+		for (var i=0; i < images.length; i += 1) {
 			// If the image has a cursor
 			if (images[i].cursorImg || images[i].clickable) {
 				// Check if the cursor is within an image's bounds
 				if (withinBounds(ev.clientX,
 						ev.clientY,
-						images[i].x,
-						images[i].y,
-						images[i].img.width,
-						images[i].img.height)) {
+						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+						images[i].width,
+						images[i].height)) {
 					// Image is being hovered over, update cursor
 					if (images[i].cursorImg) {
 						$(jqCanvas).css(
@@ -150,7 +150,7 @@ var spookyEngine = function (canvas_id) {
 		ev.preventDefault();
 
 		// Check all texts
-		for (var i=0; i < texts.length; i++) {
+		for (var i=0; i < texts.length; i += 1) {
 			// If the text is clickable and has a clickEvent defined
 			if (texts[i] && texts[i].clickable && texts[i].clickEvent) {
 				// Check if the click was with a text's bounds
@@ -168,7 +168,7 @@ var spookyEngine = function (canvas_id) {
 		}
 
 		// Check all images
-		for (var i=0; i < images.length; i++) {
+		for (var i=0; i < images.length; i += 1) {
 			// If the image is clickable, has a clickEvent defined, and ready
 			if (images[i].clickable
 				&& images[i].clickEvent
@@ -177,10 +177,10 @@ var spookyEngine = function (canvas_id) {
 				if (withinBounds(
 					ev.clientX,
 					ev.clientY,
-					images[i].x,
-					images[i].y,
-					images[i].img.width,
-					images[i].img.height)) {
+					resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+					resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+					images[i].width,
+					images[i].height)) {
 					// Image clicked, trigger image click event
 					images[i].clickEvent();
 				}
@@ -189,7 +189,7 @@ var spookyEngine = function (canvas_id) {
 	});
 
 	// Generate raindrops
-	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i++) {
+	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i += 1) {
 		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
 	}
 
@@ -228,23 +228,31 @@ var spookyEngine = function (canvas_id) {
 		},
 
 		// Add an image
-		addImage: function (name, src, clickable, link, cursorImg) {
+		addImage: function (options) {
 			// Create a new spooky image object
 			var oSpookyImage = {
-				name: name,
-				src: src,
+				// Main options
+				name: options.name || '',
+				src: options.src,
 				img: new Image(),
-				x: -1,
-				y: -1,
-				clickable: clickable,
-				clickEvent: function () {
-					window.open(link, '_blank');
-				},
-				cursorImg: cursorImg
+				x: options.x || 0,
+				y: options.y || 0,
+				width: options.width || 0,
+				height: options.height || 0,
+
+				// Click event options
+				clickable: options.clickable || false,
+				clickEvent: options.clickEvent || function () {},
+
+				// Cursor hover options
+				cursorImg: options.cursorImg
 			};
 
 			// Set img.src, begins loading the image
-			oSpookyImage.img.src = src;
+			if (oSpookyImage.src) {
+				oSpookyImage.img.src = oSpookyImage.src;
+			}
+			
 
 			// Add to images collection
 			images.push(oSpookyImage);
@@ -269,7 +277,7 @@ var spookyEngine = function (canvas_id) {
 			canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
 
 			// Draw texts
-			for (var i=0; i < texts.length; i++) {
+			for (var i=0; i < texts.length; i += 1) {
 				// Handle custom options for drawing text
 				if (texts[i]) {
 					// fillStyle
@@ -297,34 +305,16 @@ var spookyEngine = function (canvas_id) {
 			}
 
 			// Draw images
-			for (var i=0; i < images.length; i++) {
+			for (var i=0; i < images.length; i += 1) {
 				// If the image is loaded
 				if (images[i].img.complete) {
-					// Update image positions
-					if (images[i].x == -1 || images[i].y == -1) {
-						switch (images[i].name) {
-							// Github logo center bottom
-							case 'github-logo':
-								images[i].x = (jqCanvas.width/2)-(LOGO_SIZE/2);
-								images[i].y = jqCanvas.height - LOGO_SIZE - 25;
-								break;
-							// Twitter logo bottom right
-							case 'twitter-logo':
-								images[i].x = jqCanvas.width - LOGO_SIZE;
-								images[i].y = jqCanvas.height - LOGO_SIZE;
-								break;
-							default:
-								break;
-						}
-					}
-
 					// Draw image
 					canvasContext.drawImage(
 						images[i].img,
-						images[i].x,
-						images[i].y,
-						LOGO_SIZE,
-						LOGO_SIZE
+						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+						images[i].width,
+						images[i].height
 					);
 				}
 			}

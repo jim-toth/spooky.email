@@ -24,9 +24,26 @@ function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
 };
 
 // Helper function to determine if the spooky asset is set to a specific alignment for x or y positions
+// "center" = center alignment
+// "right" = right alignment
+// "bottom" = bottom alignment
 // Returns (calculated, if necessary) coordinate
-function resolvePosition(pos, canvasDimension) {
-	return pos === "center" ? canvasDimension/2 : pos;
+function resolvePosition(pos, canvasDimension, dimension) {
+	var _pos;
+
+	if (pos === "center") {
+		if (dimension) {
+			_pos = (canvasDimension / 2) - (dimension / 2);
+		} else {
+			_pos = canvasDimension / 2;
+		}
+	} else if (pos === "right" || pos === "bottom") {
+		_pos = canvasDimension - dimension;
+	} else {
+		_pos = pos;
+	}
+
+	return _pos;
 };
 
 // Copies text to clipboard
@@ -75,10 +92,11 @@ function CopyEmailToClipboard(text) {
 function spookyConsoleArt() {
 	var spookyWord = 'SPOOOOOOOOOKY';
 	var spookyLine = '.\t\t\t';
-	var spookyString = spookyLine + '~~~(.  .)~~~\n'
-						+ spookyLine + 	'\\__      __/\n';
-	for (var i=0; i < spookyWord.length; i++) {
-		if (i % 2 == 0) {
+	var spookyString = spookyLine+'~~~(.  .)~~~\n'+
+		spookyLine+'\\__      __/\n';
+	var i;
+	for (i = 0; i < spookyWord.length; i += 1) {
+		if (i % 2 === 0) {
 			spookyString += spookyLine+'   )  '+spookyWord.substr(i,1)+'  )\n';
 		} else {
 			spookyString += spookyLine+'  (   '+spookyWord.substr(i,1)+' (\n';
