@@ -18,12 +18,13 @@ $(document).ready(function () {
 			CopyEmailToClipboard(emailText);
 		}
 	});
-	
+
 	// Add Github logo
 	spooky.addImage({
 		name: "github-logo",
 		x: "center",
 		y: "bottom",
+		y_offset: -25,
 		width: 120,
 		height: 120,
 		src: "media/GitHub-Mark-120px-plus.png",

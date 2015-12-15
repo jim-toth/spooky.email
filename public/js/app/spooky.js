@@ -205,8 +205,11 @@ var spookyEngine = function (canvas_id) {
 			var oSpookyText = {
 				// Main options
 				text: options.text || '',
+				name: options.name,
 				x: options.x || 0,
 				y: options.y || 0,
+				x_offset: options.x_offset || 0,
+				y_offset: options.y_offset || 0,
 				width: options.width || 0,
 				height: options.height || 0,
 				
@@ -232,11 +235,13 @@ var spookyEngine = function (canvas_id) {
 			// Create a new spooky image object
 			var oSpookyImage = {
 				// Main options
-				name: options.name || '',
+				name: options.name,
 				src: options.src,
 				img: new Image(),
 				x: options.x || 0,
 				y: options.y || 0,
+				x_offset: options.x_offset || 0,
+				y_offset: options.y_offset || 0,
 				width: options.width || 0,
 				height: options.height || 0,
 
@@ -299,8 +304,8 @@ var spookyEngine = function (canvas_id) {
 				// Draw text to canvas
 				canvasContext.fillText(
 					texts[i].text,
-					resolvePosition(texts[i].x, jqCanvas.width),
-					resolvePosition(texts[i].y, jqCanvas.height)
+					resolvePosition(texts[i].x, jqCanvas.width)+texts[i].x_offset,
+					resolvePosition(texts[i].y, jqCanvas.height)+texts[i].y_offset
 				);
 			}
 
@@ -311,8 +316,8 @@ var spookyEngine = function (canvas_id) {
 					// Draw image
 					canvasContext.drawImage(
 						images[i].img,
-						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
-						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+						resolvePosition(images[i].x, jqCanvas.width, images[i].width)+images[i].x_offset,
+						resolvePosition(images[i].y, jqCanvas.height, images[i].height)+images[i].y_offset,
 						images[i].width,
 						images[i].height
 					);
