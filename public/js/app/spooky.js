@@ -1,4 +1,4 @@
-var spookyEngine = function (canvas_id) {
+var SpookyEngine = function (canvas_id, spookyOptions) {
 	// Constants
 	var MAX_RAINDROPS = 100;
 	var DEFAULT_VELOCITY = 20;
@@ -7,8 +7,8 @@ var spookyEngine = function (canvas_id) {
 	var RAIN_FILL_STYLE = 'aqua';
 	var FLASHLIGHT_RADIUS_1 = 150;
 	var FLASHLIGHT_RADIUS_2 = 175;
-	var FLASHLIGHT_KEY = 70; // f
-	var DEBUG_KEY = 68; // d
+	var FLASHLIGHT_KEY = 70; // f key
+	var DEBUG_KEY = 68; // d key
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'default';
@@ -16,6 +16,7 @@ var spookyEngine = function (canvas_id) {
 	var DEFAULT_FILL_STYLE = 'white';
 	var DEFAULT_TEXT_ALIGN = 'start';
 
+	// The ID for the canvas DOM element
 	var canvas_id = canvas_id;
 
 	// Text assets
@@ -188,143 +189,155 @@ var spookyEngine = function (canvas_id) {
 		}
 	});
 
+	// Toggle rain effect on or off, default on
+	this.rain = spookyOptions.rain;
+
 	// Generate raindrops
-	for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i += 1) {
-		rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
-	}
+	this._generateRaindrops = function () {
+		// Generate raindrops
+		for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i += 1) {
+			rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
+		}
+	},
 
-	return {
-		// Kicks off the SpookyEngine
-		haunt: function () {
-			this.draw();
-		},
+	// Kicks off the SpookyEngine
+	this.haunt = function () {
+		// generate rain
+		if (this.rain) {
+			this._generateRaindrops();
+		}
 
-		// Add text
-		addText: function (options) {
-			// Create a new spooky text object
-			var oSpookyText = {
-				// Main options
-				text: options.text || '',
-				name: options.name,
-				x: options.x || 0,
-				y: options.y || 0,
-				x_offset: options.x_offset || 0,
-				y_offset: options.y_offset || 0,
-				width: options.width || 0,
-				height: options.height || 0,
-				
-				// Canvas painting options
-				fillStyle: options.fillStyle || DEFAULT_FILL_STYLE,
-				font: options.font || DEFAULT_FONT,
-				textAlign: options.textAlign,
+		// kick off draw method
+		this.draw();
+	},
 
-				// Click event options
-				clickable: options.clickable || false,
-				clickEvent: options.clickEvent || function () {},
-
-				// Cursor hover options
-				cursorImg: options.cursorImg
-			};
-
-			// Add to texts collection
-			texts.push(oSpookyText);
-		},
-
-		// Add an image
-		addImage: function (options) {
-			// Create a new spooky image object
-			var oSpookyImage = {
-				// Main options
-				name: options.name,
-				src: options.src,
-				img: new Image(),
-				x: options.x || 0,
-				y: options.y || 0,
-				x_offset: options.x_offset || 0,
-				y_offset: options.y_offset || 0,
-				width: options.width || 0,
-				height: options.height || 0,
-
-				// Click event options
-				clickable: options.clickable || false,
-				clickEvent: options.clickEvent || function () {},
-
-				// Cursor hover options
-				cursorImg: options.cursorImg
-			};
-
-			// Set img.src, begins loading the image
-			if (oSpookyImage.src) {
-				oSpookyImage.img.src = oSpookyImage.src;
-			}
+	// Add text
+	this.addText = function (options) {
+		// Create a new spooky text object
+		var oSpookyText = {
+			// Main options
+			text: options.text || '',
+			name: options.name,
+			x: options.x || 0,
+			y: options.y || 0,
+			x_offset: options.x_offset || 0,
+			y_offset: options.y_offset || 0,
+			width: options.width || 0,
+			height: options.height || 0,
 			
+			// Canvas painting options
+			fillStyle: options.fillStyle || DEFAULT_FILL_STYLE,
+			font: options.font || DEFAULT_FONT,
+			textAlign: options.textAlign,
 
-			// Add to images collection
-			images.push(oSpookyImage);
-		},
+			// Click event options
+			clickable: options.clickable || false,
+			clickEvent: options.clickEvent || function () {},
 
-		// Draw function
-		draw: function draw() {
-			// Set up draw function to loop
-			// TODO: fix w. "this" ?
-			requestAnimationFrame(draw);
+			// Cursor hover options
+			cursorImg: options.cursorImg
+		};
 
-			// Update canvas dimensions to handle window resize
-			jqCanvas.width = window.innerWidth;
-			jqCanvas.height = window.innerHeight;
+		// Add to texts collection
+		texts.push(oSpookyText);
+	};
 
-			// Reset
-			canvasContext.globalCompositeOperation = 'source-over';
-			canvasContext.clearRect(0, 0, jqCanvas.width, jqCanvas.height);
+	// Add an image
+	this.addImage = function (options) {
+		// Create a new spooky image object
+		var oSpookyImage = {
+			// Main options
+			name: options.name,
+			src: options.src,
+			img: new Image(),
+			x: options.x || 0,
+			y: options.y || 0,
+			x_offset: options.x_offset || 0,
+			y_offset: options.y_offset || 0,
+			width: options.width || 0,
+			height: options.height || 0,
 
-			// Fill canvas background
-			canvasContext.fillStyle = 'black';
-			canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
+			// Click event options
+			clickable: options.clickable || false,
+			clickEvent: options.clickEvent || function () {},
 
-			// Draw texts
-			for (var i=0; i < texts.length; i += 1) {
-				// Handle custom options for drawing text
-				if (texts[i]) {
-					// fillStyle
-					if (texts[i].fillStyle) {
-						canvasContext.fillStyle = texts[i].fillStyle;
-					}
+			// Cursor hover options
+			cursorImg: options.cursorImg
+		};
 
-					// font
-					if (texts[i].font) {
-						canvasContext.font = texts[i].font;
-					}
+		// Set img.src, begins loading the image
+		if (oSpookyImage.src) {
+			oSpookyImage.img.src = oSpookyImage.src;
+		}
+		
 
-					// textAlign
-					if (texts[i].textAlign) {
-						canvasContext.textAlign = texts[i].textAlign;
-					}
+		// Add to images collection
+		images.push(oSpookyImage);
+	};
+
+	// Draw function
+	this.draw = function draw() {
+		// Set up draw function to loop
+		// TODO: fix w. "this" ?
+		requestAnimationFrame(draw.bind(this));
+
+		// Update canvas dimensions to handle window resize
+		jqCanvas.width = window.innerWidth;
+		jqCanvas.height = window.innerHeight;
+
+		// Reset
+		canvasContext.globalCompositeOperation = 'source-over';
+		canvasContext.clearRect(0, 0, jqCanvas.width, jqCanvas.height);
+
+		// Fill canvas background
+		canvasContext.fillStyle = 'black';
+		canvasContext.fillRect(0, 0, jqCanvas.width, jqCanvas.height);
+
+		// Draw texts
+		for (var i=0; i < texts.length; i += 1) {
+			// Handle custom options for drawing text
+			if (texts[i]) {
+				// fillStyle
+				if (texts[i].fillStyle) {
+					canvasContext.fillStyle = texts[i].fillStyle;
 				}
 
-				// Draw text to canvas
-				canvasContext.fillText(
-					texts[i].text,
-					resolvePosition(texts[i].x, jqCanvas.width)+texts[i].x_offset,
-					resolvePosition(texts[i].y, jqCanvas.height)+texts[i].y_offset
+				// font
+				if (texts[i].font) {
+					canvasContext.font = texts[i].font;
+				}
+
+				// textAlign
+				if (texts[i].textAlign) {
+					canvasContext.textAlign = texts[i].textAlign;
+				}
+			}
+
+			// Draw text to canvas
+			canvasContext.fillText(
+				texts[i].text,
+				resolvePosition(texts[i].x, jqCanvas.width)+texts[i].x_offset,
+				resolvePosition(texts[i].y, jqCanvas.height)+texts[i].y_offset
+			);
+		}
+
+		// Draw images
+		for (var i=0; i < images.length; i += 1) {
+			// If the image is loaded
+			if (images[i].img.complete) {
+				// Draw image
+				canvasContext.drawImage(
+					images[i].img,
+					resolvePosition(images[i].x, jqCanvas.width, images[i].width)+images[i].x_offset,
+					resolvePosition(images[i].y, jqCanvas.height, images[i].height)+images[i].y_offset,
+					images[i].width,
+					images[i].height
 				);
 			}
+		}
 
-			// Draw images
-			for (var i=0; i < images.length; i += 1) {
-				// If the image is loaded
-				if (images[i].img.complete) {
-					// Draw image
-					canvasContext.drawImage(
-						images[i].img,
-						resolvePosition(images[i].x, jqCanvas.width, images[i].width)+images[i].x_offset,
-						resolvePosition(images[i].y, jqCanvas.height, images[i].height)+images[i].y_offset,
-						images[i].width,
-						images[i].height
-					);
-				}
-			}
-
-			// Draw Raindrops
+		// Draw Raindrops
+		if (this.rain) {
 			$.each(rain, function (idx, drop) {
 				// Draw drop
 				canvasContext.fillStyle = RAIN_FILL_STYLE;
@@ -346,51 +359,51 @@ var spookyEngine = function (canvas_id) {
 					drop.velocity = DEFAULT_VELOCITY + generateVelocityMod();
 				}
 			});
-
-			// Spooky opacity filter!
-			// clear mask context
-			maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
-
-			// fill with opacity settings
-			maskContext.fillStyle = 'rgba(0,0,0,0.85)';
-			maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
-
-			// flashlight
-			if (flashlight_on) {
-				//maskContext.translate(cursor_pos.x, cursor_pos.y);
-				var grd = maskContext.createRadialGradient(
-					cursor_pos.x,
-					cursor_pos.y,
-					FLASHLIGHT_RADIUS_1,
-					cursor_pos.x,
-					cursor_pos.y,
-					FLASHLIGHT_RADIUS_2);
-				grd.addColorStop(0, 'white');
-				grd.addColorStop(1, 'rgba(255,255,255,0.1)');
-				maskContext.fillStyle = grd;
-				maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
-			}
-
-			// Draw mask canvas to main canvas
-			// NB: multiply mode to create the opaque filter effect
-			canvasContext.globalCompositeOperation = 'multiply';
-			canvasContext.drawImage(maskCanvas, 0, 0);
-			canvasContext.globalCompositeOperation = 'source-over';
-
-			// debug mode
-			if (debug_mode_on) {
-				// clear debug context
-				debugContext.clearRect(0,0,debugCanvas.width, debugCanvas.height);
-
-				// debug mode logo
-				debugContext.fillStyle = 'red';
-				debugContext.font = '32px Verdana';
-				debugContext.textAlign = 'center';
-				debugContext.fillText('DEBUG', jqCanvas.width/2, 72);
-
-				// Draw debug canvas to main canvas
-				canvasContext.drawImage(debugCanvas, 0, 0);
-			}
 		}
-	}
+
+		// Spooky opacity filter!
+		// clear mask context
+		maskContext.clearRect(0,0,maskCanvas.width, maskCanvas.height);
+
+		// fill with opacity settings
+		maskContext.fillStyle = 'rgba(0,0,0,0.85)';
+		maskContext.fillRect(0,0,maskCanvas.width, maskCanvas.height);
+
+		// flashlight
+		if (flashlight_on) {
+			//maskContext.translate(cursor_pos.x, cursor_pos.y);
+			var grd = maskContext.createRadialGradient(
+				cursor_pos.x,
+				cursor_pos.y,
+				FLASHLIGHT_RADIUS_1,
+				cursor_pos.x,
+				cursor_pos.y,
+				FLASHLIGHT_RADIUS_2);
+			grd.addColorStop(0, 'white');
+			grd.addColorStop(1, 'rgba(255,255,255,0.1)');
+			maskContext.fillStyle = grd;
+			maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+		}
+
+		// Draw mask canvas to main canvas
+		// NB: multiply mode to create the opaque filter effect
+		canvasContext.globalCompositeOperation = 'multiply';
+		canvasContext.drawImage(maskCanvas, 0, 0);
+		canvasContext.globalCompositeOperation = 'source-over';
+
+		// debug mode
+		if (debug_mode_on) {
+			// clear debug context
+			debugContext.clearRect(0,0,debugCanvas.width, debugCanvas.height);
+
+			// debug mode logo
+			debugContext.fillStyle = 'red';
+			debugContext.font = '32px Verdana';
+			debugContext.textAlign = 'center';
+			debugContext.fillText('DEBUG', jqCanvas.width/2, 72);
+
+			// Draw debug canvas to main canvas
+			canvasContext.drawImage(debugCanvas, 0, 0);
+		}
+	};
 }

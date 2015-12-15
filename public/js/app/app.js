@@ -1,6 +1,7 @@
 $(document).ready(function () {
 	// Create a spookyEngine, passing in selector for target canvas
-	var spooky = spookyEngine("canvas#spooky_canvas");
+	// Turn on rain
+	var spooky = new SpookyEngine("canvas#spooky_canvas", { rain: true });
 
 	// Add email text
 	var emailText = "jim@spooky.email";
