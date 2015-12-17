@@ -8,8 +8,8 @@ REM		calls config.bat, which sets variables used during startup
 
 CALL config.bat
 
-REM START cmd.exe /K "cd %dev_root%"
-REM START cmd.exe /K "cd %dev_root% && npm start"
+START cmd.exe /K "cd %dev_root%"
+START cmd.exe /K "cd %dev_root% && npm start"
 START "" /d %sublime_text_root% sublime_text.exe %sublime_text_proj%
-REM START explorer.exe "%dev_root%"
-REM START "" /d %browser_root% "%local_www_root%"
+START explorer.exe "%dev_root%"
+START "" /d %browser_root% "%local_www_root%"
