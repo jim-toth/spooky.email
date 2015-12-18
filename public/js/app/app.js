@@ -91,6 +91,6 @@ $(document).ready(function () {
 		}
 	});
 
-	// Let the games begin!
+	// Call the engine start method
 	spooky.haunt();
 });
