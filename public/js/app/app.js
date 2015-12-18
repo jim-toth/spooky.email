@@ -16,7 +16,7 @@ $(document).ready(function () {
 		height: 72,
 		clickable: true,
 		clickEvent: function () {
-			// Copy text to clipboard
+			// Copy email address to clipboard
 			spooky.copyToClipboard(emailText);
 		}
 	});
@@ -29,7 +29,7 @@ $(document).ready(function () {
 		y: 32,
 		clickable: true,
 		clickEvent: function () {
-			// Toggle lights
+			// Toggle lights (turns off alpha mask)
 			spooky.toggleLights();
 		}
 	});
@@ -42,7 +42,7 @@ $(document).ready(function () {
 		y: 64,
 		clickable: true,
 		clickEvent: function () {
-			// Toggle flashlight
+			// Toggle flashlight around cursor
 			spooky.toggleFlashlight();
 		}
 	});
@@ -55,7 +55,7 @@ $(document).ready(function () {
 		y: 96,
 		clickable: true,
 		clickEvent: function () {
-			// Toggle rain
+			// Toggle rain effect
 			spooky.toggleRain();
 		}
 	});
@@ -71,6 +71,7 @@ $(document).ready(function () {
 		src: "media/GitHub-Mark-120px-plus.png",
 		clickable: true,
 		clickEvent: function () {
+			// Open link to github.com/jim-toth in a new tab
 			window.open("https://github.com/jim-toth", '_blank');
 		}
 	});
@@ -85,6 +86,7 @@ $(document).ready(function () {
 		src: "media/TwitterLogo_white.png",
 		clickable: true,
 		clickEvent: function () {
+			// Open link to twitter.com/letifarz in a new tab
 			window.open("https://twitter.com/letifarz", '_blank');
 		}
 	});
