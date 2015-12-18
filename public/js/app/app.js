@@ -17,7 +17,7 @@ $(document).ready(function () {
 		clickable: true,
 		clickEvent: function () {
 			// Copy text to clipboard
-			CopyEmailToClipboard(emailText);
+			spooky.copyToClipboard(emailText);
 		}
 	});
 

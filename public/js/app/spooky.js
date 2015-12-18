@@ -158,7 +158,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 				if (withinBounds(
 					ev.clientX,
 					ev.clientY,
-					resolvePosition(texts[i].x, jqCanvas.width),
+					(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
 					resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
 					texts[i].width,
 					texts[i].height)) {
@@ -492,7 +492,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 	// Copies text to clipboard
 	// NB: Text can only be copied from the DOM
-	function CopyEmailToClipboard(text) {
+	this.copyToClipboard = function (text) {
 		// create new text node with desired text
 		var textNode = document.createTextNode(text);
 
@@ -523,7 +523,11 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 			var success = document.execCommand('copy');
 			
 			// Notify console
-			console.log('Copied text to clipboard!');
+			if (success) {
+				console.log("Copied text to clipboard.");
+			} else {
+				console.err("Failed to copy text to clipboard.");
+			}
 		} catch (err) {
 			console.log(err);
 		}
