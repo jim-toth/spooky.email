@@ -43,19 +43,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var email_text_width = 0;
 	var email_text_height = 72;
 
-	// Grab Audio Context
-	var audioContext;
-	if (typeof AudioContext !== 'undefined') {
-		audioContext = new AudioContext();
-	} else if (typeof webkitAudioContext !== 'undefined') {
-		audioContext = new webkitAudioContext();
-	} else {
-		throw new Error(
-			'AudioContext not supported by this browser because it\'s too old.'  
-			+'  Is it a ghost?'
-		);
-	}
-
 	// Grab canvas and canvas context
 	var jqCanvas = $(canvas_id)[0];
 	var canvasContext = jqCanvas.getContext('2d');
@@ -75,107 +62,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	debugCanvas.width = jqCanvas.width;
 	debugCanvas.height = jqCanvas.height;
 	var debugContext = debugCanvas.getContext('2d');
-
-	// Initialize mouse cursor update function
-	$(canvas_id).mousemove(function (ev) {
-		// Track cursor position
-		cursor_pos.x = ev.pageX;
-		cursor_pos.y = ev.pageY;
-
-		// Reset cursor to default
-		$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
-
-		// Loop through texts to see if we need to update cursor
-		for (var i=0; i < texts.length; i += 1) {
-			// If the text has a cursor
-			if (texts[i].cursorImg || texts[i].clickable) {
-				// Check if the cursor is within a text's bounds
-				if (withinBounds(
-					ev.clientX,
-					ev.clientY,
-					(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
-					resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
-					texts[i].width,
-					texts[i].height)) {
-					// Text is being hovered over, update cursor
-					if (texts[i].cursorImg) {
-						$(jqCanvas).css(
-							'cursor',
-							'url('+texts[i].cursorImg+'), auto');
-					} else if (texts[i].clickable) {
-						$(jqCanvas).css('cursor', 'pointer');
-					}
-				}
-			}
-		}
-
-		// Loop through images to see if we need to update cursor
-		for (var i=0; i < images.length; i += 1) {
-			// If the image has a cursor
-			if (images[i].cursorImg || images[i].clickable) {
-				// Check if the cursor is within an image's bounds
-				if (withinBounds(ev.clientX,
-						ev.clientY,
-						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
-						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
-						images[i].width,
-						images[i].height)) {
-					// Image is being hovered over, update cursor
-					if (images[i].cursorImg) {
-						$(jqCanvas).css(
-							'cursor',
-							'url('+images[i].cursorImg+'), auto');
-					} else if (images[i].clickable) {
-						$(jqCanvas).css('cursor', 'pointer');
-					}
-					
-				}
-			}
-		}
-	});
-
-	// Catch canvas clicks
-	jqCanvas.addEventListener('click', function (ev) {
-		ev.preventDefault();
-
-		// Check all texts
-		for (var i=0; i < texts.length; i += 1) {
-			// If the text is clickable and has a clickEvent defined
-			if (texts[i].clickable && texts[i].clickEvent) {
-				// Check if the click was with a text's bounds
-				if (withinBounds(
-					ev.clientX,
-					ev.clientY,
-					(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
-					resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
-					texts[i].width,
-					texts[i].height)) {
-					// Text clicked, trigger text click event
-					texts[i].clickEvent();
-				}
-			}
-		}
-
-		// Check all images
-		for (var i=0; i < images.length; i += 1) {
-			// If the image is clickable, has a clickEvent defined, and ready
-			if (images[i].clickable
-				&& images[i].clickEvent
-				&& images[i].img.complete) {
-				// Check if the click was within an image's bounds
-				if (withinBounds(
-					ev.clientX,
-					ev.clientY,
-					resolvePosition(images[i].x, jqCanvas.width, images[i].width),
-					resolvePosition(images[i].y, jqCanvas.height, images[i].height),
-					images[i].width,
-					images[i].height)) {
-					// Image clicked, trigger image click event
-					images[i].clickEvent();
-				}
-			}
-		}
-	});
 
 	// Generates a random velocity modifier for raindrops
 	this._generateVelocityMod = function () {
@@ -221,6 +107,107 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 			ev.preventDefault();
 			this._handleKeybind(ev.which);
 		}.bind(this));
+
+		// Catch canvas clicks
+		jqCanvas.addEventListener('click', function (ev) {
+			ev.preventDefault();
+
+			// Check all texts
+			for (var i=0; i < texts.length; i += 1) {
+				// If the text is clickable and has a clickEvent defined
+				if (texts[i].clickable && texts[i].clickEvent) {
+					// Check if the click was with a text's bounds
+					if (withinBounds(
+						ev.clientX,
+						ev.clientY,
+						(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
+						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
+						texts[i].width,
+						texts[i].height)) {
+						// Text clicked, trigger text click event
+						texts[i].clickEvent();
+					}
+				}
+			}
+
+			// Check all images
+			for (var i=0; i < images.length; i += 1) {
+				// If the image is clickable, has a clickEvent defined, and ready
+				if (images[i].clickable
+					&& images[i].clickEvent
+					&& images[i].img.complete) {
+					// Check if the click was within an image's bounds
+					if (withinBounds(
+						ev.clientX,
+						ev.clientY,
+						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+						images[i].width,
+						images[i].height)) {
+						// Image clicked, trigger image click event
+						images[i].clickEvent();
+					}
+				}
+			}
+		});
+
+		// Initialize mouse cursor update function
+		$(canvas_id).mousemove(function (ev) {
+			// Track cursor position
+			cursor_pos.x = ev.pageX;
+			cursor_pos.y = ev.pageY;
+
+			// Reset cursor to default
+			$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
+
+			// Loop through texts to see if we need to update cursor
+			for (var i=0; i < texts.length; i += 1) {
+				// If the text has a cursor
+				if (texts[i].cursorImg || texts[i].clickable) {
+					// Check if the cursor is within a text's bounds
+					if (withinBounds(
+						ev.clientX,
+						ev.clientY,
+						(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
+						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
+						texts[i].width,
+						texts[i].height)) {
+						// Text is being hovered over, update cursor
+						if (texts[i].cursorImg) {
+							$(jqCanvas).css(
+								'cursor',
+								'url('+texts[i].cursorImg+'), auto');
+						} else if (texts[i].clickable) {
+							$(jqCanvas).css('cursor', 'pointer');
+						}
+					}
+				}
+			}
+
+			// Loop through images to see if we need to update cursor
+			for (var i=0; i < images.length; i += 1) {
+				// If the image has a cursor
+				if (images[i].cursorImg || images[i].clickable) {
+					// Check if the cursor is within an image's bounds
+					if (withinBounds(ev.clientX,
+							ev.clientY,
+							resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+							resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+							images[i].width,
+							images[i].height)) {
+						// Image is being hovered over, update cursor
+						if (images[i].cursorImg) {
+							$(jqCanvas).css(
+								'cursor',
+								'url('+images[i].cursorImg+'), auto');
+						} else if (images[i].clickable) {
+							$(jqCanvas).css('cursor', 'pointer');
+						}
+						
+					}
+				}
+			}
+		});
 
 		// generate rain
 		if (this.rain) {
