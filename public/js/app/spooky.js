@@ -75,7 +75,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var debugContext = debugCanvas.getContext('2d');
 
 	// Catch key presses
-	$('body').keydown(function (ev) {
+	$(document.body).keydown(function (ev) {
 		ev.preventDefault();
 
 		switch (ev.which) {
@@ -86,7 +86,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 				//debug_mode_on = !debug_mode_on;
 				break;
 		}
-	});
+	}.bind(this));
 
 	// Initialize mouse cursor update function
 	$(canvas_id).mousemove(function (ev) {
