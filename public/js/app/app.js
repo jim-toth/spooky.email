@@ -1,7 +1,17 @@
 $(document).ready(function () {
 	// Create a spookyEngine, passing in selector for target canvas
-	// Turn on rain
+	// Rain enabled at start
 	var spooky = new SpookyEngine("canvas#spooky_canvas", { rain: true });
+
+	// Add keybind for F key to toggle flashlight
+	var flashlightKeycode = 70;
+	spooky.addKeybind({
+		name: "toggle-flashlight-keybind",
+		keycode: 70, // F key
+		keydown: function () {
+			spooky.toggleFlashlight();
+		}
+	});	
 
 	// Add email text
 	var emailText = "jim@spooky.email";

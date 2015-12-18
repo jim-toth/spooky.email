@@ -9,7 +9,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var RAIN_FILL_STYLE = 'aqua';
 	var FLASHLIGHT_RADIUS_1 = 150;
 	var FLASHLIGHT_RADIUS_2 = 175;
-	var FLASHLIGHT_KEY = 70; // f key
 	var DEBUG_KEY = 68; // d key
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
@@ -27,6 +26,9 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 	// Image assets
 	var images = [];
+
+	// Registered keybinds
+	var keybinds = [];
 
 	// Create collection for rain to hold our raindrops
 	var rain = [];
@@ -217,15 +219,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		// Catch key presses
 		$(document.body).keydown(function (ev) {
 			ev.preventDefault();
-
-			switch (ev.which) {
-				case FLASHLIGHT_KEY:
-					this.toggleFlashlight();
-					break;
-				case DEBUG_KEY:
-					//debug_mode_on = !debug_mode_on;
-					break;
-			}
+			this._handleKeybind(ev.which);
 		}.bind(this));
 
 		// generate rain
@@ -235,7 +229,29 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 		// kick off draw method
 		this.draw();
-	},
+	};
+
+	// Add keybind
+	this.addKeybind = function (options) {
+		// Create a new spooky keybind object
+		var oSpookyKeybind = {
+			name: options.name,
+			keycode: options.keycode,
+			keydown: options.keydown || function () {}
+		};
+
+		// Add to keybinds collection
+		keybinds.push(oSpookyKeybind);
+	};
+
+	// Handle key clicks
+	this._handleKeybind = function (keycode) {
+		for (var i=0; i < keybinds.length; i += 1) {
+			if (keybinds[i].keycode === keycode) {
+				keybinds[i].keydown();
+			}
+		}
+	};
 
 	// Add text
 	this.addText = function (options) {
