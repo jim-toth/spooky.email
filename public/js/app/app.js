@@ -91,6 +91,6 @@ $(document).ready(function () {
 		}
 	});
 
-	// Call the engine start method
+	// Call the engine start method!
 	spooky.haunt();
 });
