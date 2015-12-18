@@ -92,5 +92,3 @@ $(document).ready(function () {
 	// Let the games begin!
 	spooky.haunt();
 });
-
-//spookyConsoleArt();
