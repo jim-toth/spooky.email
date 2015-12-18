@@ -47,20 +47,12 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var jqCanvas = $(canvas_id)[0];
 	var canvasContext = jqCanvas.getContext('2d');
 
-	// Set canvas height and width to fit page
-	jqCanvas.width = window.innerWidth;
-	jqCanvas.height = window.innerHeight;
-
 	// Canvas for opacity mask
 	var maskCanvas = document.createElement('canvas');
-	maskCanvas.width = jqCanvas.width;
-	maskCanvas.height = jqCanvas.height;
 	var maskContext = maskCanvas.getContext('2d');
 
 	// Canvas for debug
 	var debugCanvas = document.createElement('canvas');
-	debugCanvas.width = jqCanvas.width;
-	debugCanvas.height = jqCanvas.height;
 	var debugContext = debugCanvas.getContext('2d');
 
 	// Generates a random velocity modifier for raindrops
@@ -98,124 +90,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	this.flashlight = (spookyOptions.flashlight === false) ? false : true;
 	this.toggleFlashlight = function () {
 		this.flashlight = !this.flashlight;
-	};
-
-	// Kicks off the SpookyEngine
-	this.haunt = function () {
-		// Catch key presses
-		$(document.body).keydown(function (ev) {
-			ev.preventDefault();
-			this._handleKeybind(ev.which);
-		}.bind(this));
-
-		// Catch canvas clicks
-		jqCanvas.addEventListener('click', function (ev) {
-			ev.preventDefault();
-
-			// Check all texts
-			for (var i=0; i < texts.length; i += 1) {
-				// If the text is clickable and has a clickEvent defined
-				if (texts[i].clickable && texts[i].clickEvent) {
-					// Check if the click was with a text's bounds
-					if (withinBounds(
-						ev.clientX,
-						ev.clientY,
-						(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
-						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
-						texts[i].width,
-						texts[i].height)) {
-						// Text clicked, trigger text click event
-						texts[i].clickEvent();
-					}
-				}
-			}
-
-			// Check all images
-			for (var i=0; i < images.length; i += 1) {
-				// If the image is clickable, has a clickEvent defined, and ready
-				if (images[i].clickable
-					&& images[i].clickEvent
-					&& images[i].img.complete) {
-					// Check if the click was within an image's bounds
-					if (withinBounds(
-						ev.clientX,
-						ev.clientY,
-						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
-						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
-						images[i].width,
-						images[i].height)) {
-						// Image clicked, trigger image click event
-						images[i].clickEvent();
-					}
-				}
-			}
-		});
-
-		// Initialize mouse cursor update function
-		$(canvas_id).mousemove(function (ev) {
-			// Track cursor position
-			cursor_pos.x = ev.pageX;
-			cursor_pos.y = ev.pageY;
-
-			// Reset cursor to default
-			$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
-
-			// Loop through texts to see if we need to update cursor
-			for (var i=0; i < texts.length; i += 1) {
-				// If the text has a cursor
-				if (texts[i].cursorImg || texts[i].clickable) {
-					// Check if the cursor is within a text's bounds
-					if (withinBounds(
-						ev.clientX,
-						ev.clientY,
-						(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
-						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
-						texts[i].width,
-						texts[i].height)) {
-						// Text is being hovered over, update cursor
-						if (texts[i].cursorImg) {
-							$(jqCanvas).css(
-								'cursor',
-								'url('+texts[i].cursorImg+'), auto');
-						} else if (texts[i].clickable) {
-							$(jqCanvas).css('cursor', 'pointer');
-						}
-					}
-				}
-			}
-
-			// Loop through images to see if we need to update cursor
-			for (var i=0; i < images.length; i += 1) {
-				// If the image has a cursor
-				if (images[i].cursorImg || images[i].clickable) {
-					// Check if the cursor is within an image's bounds
-					if (withinBounds(ev.clientX,
-							ev.clientY,
-							resolvePosition(images[i].x, jqCanvas.width, images[i].width),
-							resolvePosition(images[i].y, jqCanvas.height, images[i].height),
-							images[i].width,
-							images[i].height)) {
-						// Image is being hovered over, update cursor
-						if (images[i].cursorImg) {
-							$(jqCanvas).css(
-								'cursor',
-								'url('+images[i].cursorImg+'), auto');
-						} else if (images[i].clickable) {
-							$(jqCanvas).css('cursor', 'pointer');
-						}
-						
-					}
-				}
-			}
-		});
-
-		// generate rain
-		if (this.rain) {
-			this._generateRaindrops();
-		}
-
-		// kick off draw method
-		this.draw();
 	};
 
 	// Add keybind
@@ -442,6 +316,132 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 	};
 
+	// Kicks off the SpookyEngine
+	this.haunt = function () {
+		// Set height and width of canvases to fit page
+		jqCanvas.width = window.innerWidth;
+		jqCanvas.height = window.innerHeight;
+		maskCanvas.width = jqCanvas.width;
+		maskCanvas.height = jqCanvas.height;
+		debugCanvas.width = jqCanvas.width;
+		debugCanvas.height = jqCanvas.height;
+
+		// Catch key presses
+		$(document.body).keydown(function (ev) {
+			ev.preventDefault();
+			this._handleKeybind(ev.which);
+		}.bind(this));
+
+		// Catch canvas clicks
+		jqCanvas.addEventListener('click', function (ev) {
+			ev.preventDefault();
+
+			// Check all texts
+			for (var i=0; i < texts.length; i += 1) {
+				// If the text is clickable and has a clickEvent defined
+				if (texts[i].clickable && texts[i].clickEvent) {
+					// Check if the click was with a text's bounds
+					if (withinBounds(
+						ev.clientX,
+						ev.clientY,
+						(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
+						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
+						texts[i].width,
+						texts[i].height)) {
+						// Text clicked, trigger text click event
+						texts[i].clickEvent();
+					}
+				}
+			}
+
+			// Check all images
+			for (var i=0; i < images.length; i += 1) {
+				// If the image is clickable, has a clickEvent defined, and ready
+				if (images[i].clickable
+					&& images[i].clickEvent
+					&& images[i].img.complete) {
+					// Check if the click was within an image's bounds
+					if (withinBounds(
+						ev.clientX,
+						ev.clientY,
+						resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+						resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+						images[i].width,
+						images[i].height)) {
+						// Image clicked, trigger image click event
+						images[i].clickEvent();
+					}
+				}
+			}
+		});
+
+		// Initialize mouse cursor update function
+		$(canvas_id).mousemove(function (ev) {
+			// Track cursor position
+			cursor_pos.x = ev.pageX;
+			cursor_pos.y = ev.pageY;
+
+			// Reset cursor to default
+			$(jqCanvas).css('cursor', DEFAULT_CANVAS_CURSOR);
+
+			// Loop through texts to see if we need to update cursor
+			for (var i=0; i < texts.length; i += 1) {
+				// If the text has a cursor
+				if (texts[i].cursorImg || texts[i].clickable) {
+					// Check if the cursor is within a text's bounds
+					if (withinBounds(
+						ev.clientX,
+						ev.clientY,
+						(texts[i].x === "center") ? resolvePosition(texts[i].x, jqCanvas.width)-(texts[i].width/2) : resolvePosition(texts[i].x, jqCanvas.width),
+						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
+						texts[i].width,
+						texts[i].height)) {
+						// Text is being hovered over, update cursor
+						if (texts[i].cursorImg) {
+							$(jqCanvas).css(
+								'cursor',
+								'url('+texts[i].cursorImg+'), auto');
+						} else if (texts[i].clickable) {
+							$(jqCanvas).css('cursor', 'pointer');
+						}
+					}
+				}
+			}
+
+			// Loop through images to see if we need to update cursor
+			for (var i=0; i < images.length; i += 1) {
+				// If the image has a cursor
+				if (images[i].cursorImg || images[i].clickable) {
+					// Check if the cursor is within an image's bounds
+					if (withinBounds(ev.clientX,
+							ev.clientY,
+							resolvePosition(images[i].x, jqCanvas.width, images[i].width),
+							resolvePosition(images[i].y, jqCanvas.height, images[i].height),
+							images[i].width,
+							images[i].height)) {
+						// Image is being hovered over, update cursor
+						if (images[i].cursorImg) {
+							$(jqCanvas).css(
+								'cursor',
+								'url('+images[i].cursorImg+'), auto');
+						} else if (images[i].clickable) {
+							$(jqCanvas).css('cursor', 'pointer');
+						}
+						
+					}
+				}
+			}
+		});
+
+		// generate rain
+		if (this.rain) {
+			this._generateRaindrops();
+		}
+
+		// kick off draw method
+		this.draw();
+	};
+
 	// Helper function to determine if an event was within bounds of an image
 	function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
 		return eventX >= imageX
@@ -472,6 +472,8 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 		return _pos;
 	};
+
+
 
 	// Spooky console art
 	function spookyConsoleArt() {
