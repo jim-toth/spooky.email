@@ -74,20 +74,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	debugCanvas.height = jqCanvas.height;
 	var debugContext = debugCanvas.getContext('2d');
 
-	// Catch key presses
-	$(document.body).keydown(function (ev) {
-		ev.preventDefault();
-
-		switch (ev.which) {
-			case FLASHLIGHT_KEY:
-				this.toggleFlashlight();
-				break;
-			case DEBUG_KEY:
-				//debug_mode_on = !debug_mode_on;
-				break;
-		}
-	}.bind(this));
-
 	// Initialize mouse cursor update function
 	$(canvas_id).mousemove(function (ev) {
 		// Track cursor position
@@ -228,6 +214,20 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 	// Kicks off the SpookyEngine
 	this.haunt = function () {
+		// Catch key presses
+		$(document.body).keydown(function (ev) {
+			ev.preventDefault();
+
+			switch (ev.which) {
+				case FLASHLIGHT_KEY:
+					this.toggleFlashlight();
+					break;
+				case DEBUG_KEY:
+					//debug_mode_on = !debug_mode_on;
+					break;
+			}
+		}.bind(this));
+
 		// generate rain
 		if (this.rain) {
 			this._generateRaindrops();
