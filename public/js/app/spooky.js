@@ -385,7 +385,8 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 					rain[i].y = 0;
 
 					// Set a new random velocity
-					rain[i].velocity = DEFAULT_VELOCITY + generateVelocityMod();
+					rain[i].velocity = DEFAULT_VELOCITY +
+						this._generateVelocityMod();
 				}
 			}
 		}
