@@ -1,5 +1,7 @@
 var SpookyEngine = function (canvas_id, spookyOptions) {
 	// Constants
+	var VELOCITY_MOD_MAX = 10;
+	var VELOCITY_MOD_MIN = -10;
 	var MAX_RAINDROPS = 100;
 	var DEFAULT_VELOCITY = 20;
 	var RAINDROP_WIDTH = 1;
@@ -187,13 +189,23 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 	});
 
+	// Generates a random velocity modifier for raindrops
+	this._generateVelocityMod = function () {
+		return Math.floor(Math.random() * (VELOCITY_MOD_MAX-VELOCITY_MOD_MIN+1))
+			+ VELOCITY_MOD_MIN;
+	};
+
 	// Generate raindrops
 	this._generateRaindrops = function () {
 		// Generate raindrops
 		for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i += 1) {
-			rain.push(raindrop(i*10, 0, DEFAULT_VELOCITY + generateVelocityMod()));
+			rain.push({
+				x: i*10,
+				y: 0,
+				velocity: DEFAULT_VELOCITY + this._generateVelocityMod()
+			});
 		}
-	},
+	};
 
 	// Toggle rain effect on or off, default on
 	this.rain = spookyOptions.rain;

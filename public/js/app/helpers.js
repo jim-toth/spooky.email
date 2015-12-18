@@ -1,20 +1,3 @@
-var VELOCITY_MOD_MAX = 10;
-var VELOCITY_MOD_MIN = -10;
-
-// Creates a raindrop object, factory function
-function raindrop(startX, startY, velocity) {
-	return {
-		velocity: velocity,
-		x: startX,
-		y: startY
-	};
-};
-
-// Generates a random velocity modifier for raindrops
-function generateVelocityMod() {
-	return Math.floor(Math.random() * (VELOCITY_MOD_MAX - VELOCITY_MOD_MIN + 1)) + VELOCITY_MOD_MIN;
-};
-
 // Helper function to determine if an event was within bounds of an image
 function withinBounds(eventX, eventY, imageX, imageY, imageWidth, imageHeight) {
 	return eventX >= imageX
