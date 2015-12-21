@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(function () {
 	// Create a spookyEngine, passing in selector for target canvas
 	// Rain enabled at start

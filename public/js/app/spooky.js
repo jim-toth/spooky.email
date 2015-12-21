@@ -1,3 +1,5 @@
+"use strict";
+
 var SpookyEngine = function (canvas_id, spookyOptions) {
 	// Constants
 	var VELOCITY_MOD_MAX = 10;
