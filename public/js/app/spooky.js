@@ -1,6 +1,6 @@
-"use strict";
-
 var SpookyEngine = function (canvas_id, spookyOptions) {
+	"use strict";
+
 	// Constants
 	var VELOCITY_MOD_MAX = 10;
 	var VELOCITY_MOD_MIN = -10;
@@ -19,9 +19,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var DEFAULT_TEXT_HEIGHT = 32;
 	var DEFAULT_FILL_STYLE = 'white';
 	var DEFAULT_TEXT_ALIGN = 'start';
-
-	// The ID for the canvas DOM element
-	var canvas_id = canvas_id;
 
 	// Text assets
 	var texts = [];
@@ -57,24 +54,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var debugCanvas = document.createElement('canvas');
 	var debugContext = debugCanvas.getContext('2d');
 
-	// Generates a random velocity modifier for raindrops
-	this._generateVelocityMod = function () {
-		return Math.floor(Math.random() * (VELOCITY_MOD_MAX-VELOCITY_MOD_MIN+1))
-			+ VELOCITY_MOD_MIN;
-	};
-
-	// Generate raindrops
-	this._generateRaindrops = function () {
-		// Generate raindrops
-		for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i += 1) {
-			rain.push({
-				x: i*10,
-				y: 0,
-				velocity: DEFAULT_VELOCITY + this._generateVelocityMod()
-			});
-		}
-	};
-
 	// Toggle rain effect on or off, default on
 	this.rain = spookyOptions.rain;
 	this.toggleRain = function () {
@@ -108,7 +87,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	};
 
 	// Handle key clicks
-	this._handleKeybind = function (keycode) {
+	this.handleKeybind = function (keycode) {
 		for (var i=0; i < keybinds.length; i += 1) {
 			if (keybinds[i].keycode === keycode) {
 				keybinds[i].keydown();
@@ -273,7 +252,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 					// Set a new random velocity
 					rain[i].velocity = DEFAULT_VELOCITY +
-						this._generateVelocityMod();
+						generateVelocityMod();
 				}
 			}
 		}
@@ -339,7 +318,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		// Catch key presses
 		$(document.body).keydown(function (ev) {
 			ev.preventDefault();
-			this._handleKeybind(ev.which);
+			this.handleKeybind(ev.which);
 		}.bind(this));
 
 		// Catch canvas clicks
@@ -449,11 +428,29 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 		// generate rain
 		if (this.rain) {
-			this._generateRaindrops();
+			generateRaindrops();
 		}
 
 		// kick off draw method
 		this.draw();
+	};
+
+	// Generates a random velocity modifier for raindrops
+	function generateVelocityMod() {
+		return Math.floor(Math.random() * (VELOCITY_MOD_MAX-VELOCITY_MOD_MIN+1))
+			+ VELOCITY_MOD_MIN;
+	};
+
+	// Generate raindrops
+	function generateRaindrops() {
+		// Generate raindrops
+		for (var i=0; i < jqCanvas.width/RAINDROP_SPACING; i += 1) {
+			rain.push({
+				x: i*10,
+				y: 0,
+				velocity: DEFAULT_VELOCITY + generateVelocityMod()
+			});
+		}
 	};
 
 	// Helper function to determine if an event was within bounds of an image

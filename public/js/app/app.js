@@ -1,6 +1,6 @@
-"use strict";
-
 $(document).ready(function () {
+	"use strict";
+
 	// Create a spookyEngine, passing in selector for target canvas
 	// Rain enabled at start
 	var spooky = new SpookyEngine("canvas#spooky_canvas", { rain: true });
