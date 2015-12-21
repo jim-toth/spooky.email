@@ -25,9 +25,12 @@ $(document).ready(function () {
 		textAlign: "center",
 		height: 72,
 		clickable: true,
-		clickEvent: function () {
+		click: function () {
 			// Copy email address to clipboard
 			spooky.copyToClipboard(emailText);
+		},
+		hover: {
+			fillStyle: "white"
 		}
 	});
 
@@ -38,9 +41,12 @@ $(document).ready(function () {
 		x: 0,
 		y: 32,
 		clickable: true,
-		clickEvent: function () {
+		click: function () {
 			// Toggle lights (turns off alpha mask)
 			spooky.toggleLights();
+		},
+		hover: {
+			fillStyle: "red"
 		}
 	});
 
@@ -51,9 +57,12 @@ $(document).ready(function () {
 		x: 0,
 		y: 64,
 		clickable: true,
-		clickEvent: function () {
+		click: function () {
 			// Toggle flashlight around cursor
 			spooky.toggleFlashlight();
+		},
+		hover: {
+			fillStyle: "red"
 		}
 	});
 
@@ -64,9 +73,12 @@ $(document).ready(function () {
 		x: 0,
 		y: 96,
 		clickable: true,
-		clickEvent: function () {
+		click: function () {
 			// Toggle rain effect
 			spooky.toggleRain();
+		},
+		hover: {
+			fillStyle: "red"
 		}
 	});
 
@@ -80,7 +92,7 @@ $(document).ready(function () {
 		height: 120,
 		src: "media/GitHub-Mark-120px-plus.png",
 		clickable: true,
-		clickEvent: function () {
+		click: function () {
 			// Open link to github.com/jim-toth in a new tab
 			window.open("https://github.com/jim-toth", '_blank');
 		}
@@ -95,7 +107,7 @@ $(document).ready(function () {
 		height: 120,
 		src: "media/TwitterLogo_white.png",
 		clickable: true,
-		clickEvent: function () {
+		click: function () {
 			// Open link to twitter.com/letifarz in a new tab
 			window.open("https://twitter.com/letifarz", '_blank');
 		}

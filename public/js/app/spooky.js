@@ -135,10 +135,14 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 			// Click event options
 			clickable: options.clickable || false,
-			clickEvent: options.clickEvent || function () {},
+			click: options.click || function () {},
 
-			// Cursor hover options
-			cursorImg: options.cursorImg
+			// Mouse hover options
+			cursorImg: options.cursorImg,
+			_hovering: false,
+			hover: options.hover || {
+				fillStyle: options.hover.fillStyle || DEFAULT_FILL_STYLE
+			}
 		};
 
 		// Measure text based on the font size, update .width
@@ -166,9 +170,9 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 			// Click event options
 			clickable: options.clickable || false,
-			clickEvent: options.clickEvent || function () {},
+			click: options.click || function () {},
 
-			// Cursor hover options
+			// Mouse hover options
 			cursorImg: options.cursorImg
 		};
 
@@ -205,7 +209,11 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 			if (texts[i]) {
 				// fillStyle
 				if (texts[i].fillStyle) {
-					canvasContext.fillStyle = texts[i].fillStyle;
+					if (texts[i]._hovering) {
+						canvasContext.fillStyle = texts[i].hover.fillStyle;
+					} else {
+						canvasContext.fillStyle = texts[i].fillStyle;
+					}
 				}
 
 				// font
@@ -338,8 +346,8 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 
 			// Check all texts
 			for (var i=0; i < texts.length; i += 1) {
-				// If the text is clickable and has a clickEvent defined
-				if (texts[i].clickable && texts[i].clickEvent) {
+				// If the text is clickable and has a click-event defined
+				if (texts[i].clickable && texts[i].click) {
 					// Check if the click was with a text's bounds
 					if (withinBounds(
 						ev.clientX,
@@ -349,16 +357,16 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 						texts[i].width,
 						texts[i].height)) {
 						// Text clicked, trigger text click event
-						texts[i].clickEvent();
+						texts[i].click();
 					}
 				}
 			}
 
 			// Check all images
 			for (var i=0; i < images.length; i += 1) {
-				// If the image is clickable, has a clickEvent defined, and ready
+				// If the image is clickable, has a click-event defined, and ready
 				if (images[i].clickable
-					&& images[i].clickEvent
+					&& images[i].click
 					&& images[i].img.complete) {
 					// Check if the click was within an image's bounds
 					if (withinBounds(
@@ -369,7 +377,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 						images[i].width,
 						images[i].height)) {
 						// Image clicked, trigger image click event
-						images[i].clickEvent();
+						images[i].click();
 					}
 				}
 			}
@@ -396,7 +404,9 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 						resolvePosition(texts[i].y, jqCanvas.height)-texts[i].height,
 						texts[i].width,
 						texts[i].height)) {
-						// Text is being hovered over, update cursor
+						// Text is being hovered over, update cursor, update 
+						// object _hovering
+						texts[i]._hovering = true;
 						if (texts[i].cursorImg) {
 							$(jqCanvas).css(
 								'cursor',
@@ -404,6 +414,8 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 						} else if (texts[i].clickable) {
 							$(jqCanvas).css('cursor', 'pointer');
 						}
+					} else {
+						texts[i]._hovering = false;
 					}
 				}
 			}
