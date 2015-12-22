@@ -11,7 +11,6 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	var RAIN_FILL_STYLE = 'aqua';
 	var FLASHLIGHT_RADIUS_1 = 150;
 	var FLASHLIGHT_RADIUS_2 = 175;
-	var DEBUG_KEY = 68; // d key
 	var RAINDROP_SPACING = 5;
 	var LOGO_SIZE = 120;
 	var DEFAULT_CANVAS_CURSOR = 'default';
@@ -32,15 +31,8 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	// Create collection for rain to hold our raindrops
 	var rain = [];
 
-	// toggle variable for debug mode on/off
-	var debug_mode_on = false;
-
 	// Track cursor position
 	var cursor_pos = { x: -1000, y: -1000 };
-
-	// track center text width/height for calculations
-	var email_text_width = 0;
-	var email_text_height = 72;
 
 	// Grab canvas and canvas context
 	var jqCanvas = $(canvas_id)[0];
@@ -53,6 +45,12 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 	// Canvas for debug
 	var debugCanvas = document.createElement('canvas');
 	var debugContext = debugCanvas.getContext('2d');
+
+	// Toggle debug mode on or off, default off
+	this.debug = spookyOptions.debug;
+	this.toggleDebug = function () {
+		this.debug = !this.debug;
+	};
 
 	// Toggle rain effect on or off, default on
 	this.rain = spookyOptions.rain;
@@ -290,7 +288,7 @@ var SpookyEngine = function (canvas_id, spookyOptions) {
 		}
 
 		// debug mode
-		if (debug_mode_on) {
+		if (this.debug) {
 			// clear debug context
 			debugContext.clearRect(0,0,debugCanvas.width, debugCanvas.height);
 

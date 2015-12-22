@@ -6,14 +6,22 @@ $(document).ready(function () {
 	var spooky = new SpookyEngine("canvas#spooky_canvas", { rain: true });
 
 	// Add keybind for F key to toggle flashlight
-	var flashlightKeycode = 70;
 	spooky.addKeybind({
 		name: "toggle-flashlight-keybind",
 		keycode: 70, // F key
 		keydown: function () {
 			spooky.toggleFlashlight();
 		}
-	});	
+	});
+
+	// Add keybind for D key to toggle debug mode
+	spooky.addKeybind({
+		name: "toggle-debug-keybind",
+		keycode: 68, // D key
+		keydown: function () {
+			spooky.toggleDebug();
+		}
+	});
 
 	// Add email text
 	var emailText = "jim@spooky.email";
