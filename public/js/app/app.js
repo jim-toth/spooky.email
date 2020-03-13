@@ -109,19 +109,19 @@ $(document).ready(function () {
 	});
 
 	// Add Twitter logo
-	spooky.addImage({
-		name: "twitter-logo",
-		x: "right",
-		y: "bottom",
-		width: 120,
-		height: 120,
-		src: "public/media/TwitterLogo_white.png",
-		clickable: true,
-		click: function () {
-			// Open link to twitter.com/letifarz in a new tab
-			window.open("https://twitter.com/letifarz", '_blank');
-		}
-	});
+// 	spooky.addImage({
+// 		name: "twitter-logo",
+// 		x: "right",
+// 		y: "bottom",
+// 		width: 120,
+// 		height: 120,
+// 		src: "public/media/TwitterLogo_white.png",
+// 		clickable: true,
+// 		click: function () {
+// 			// Open link to twitter.com/letifarz in a new tab
+// 			window.open("https://twitter.com/letifarz", '_blank');
+// 		}
+// 	});
 
 	// Call the engine start method!
 	spooky.haunt();
