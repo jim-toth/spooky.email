@@ -100,7 +100,7 @@ $(document).ready(function () {
 		y_offset: -25,
 		width: 120,
 		height: 120,
-		src: "media/GitHub-Mark-120px-plus.png",
+		src: "public/media/GitHub-Mark-120px-plus.png",
 		clickable: true,
 		click: function () {
 			// Open link to github.com/jim-toth in a new tab
@@ -115,7 +115,7 @@ $(document).ready(function () {
 		y: "bottom",
 		width: 120,
 		height: 120,
-		src: "media/TwitterLogo_white.png",
+		src: "public/media/TwitterLogo_white.png",
 		clickable: true,
 		click: function () {
 			// Open link to twitter.com/letifarz in a new tab
